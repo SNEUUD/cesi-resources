@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'view/layout/header.dart'; // Import du header personnalisé
+import 'view/layout/header.dart';
 
 void main() {
   runApp(const MainApp());
@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const Header(), // Utilisation du header personnalisé
+      appBar: const Header(),
       body: const Center(child: Text('Bienvenue sur la page d\'accueil !')),
     );
   }

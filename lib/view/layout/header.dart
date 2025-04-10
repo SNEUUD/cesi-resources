@@ -8,15 +8,14 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      // Row pour organiser le titre à gauche et les boutons à droite
+      backgroundColor: Colors.blue,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: const [
-          Text('(RE)SOURCES'), // Titre à gauche
+          Text('(RE)SOURCES'),
         ],
       ),
       actions: [
-        // Row avec deux boutons
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -29,7 +28,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
               },
               child: const Text('Se connecter'),
             ),
-            const SizedBox(width: 10), // Espacement entre les boutons
+            const SizedBox(width: 10),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
