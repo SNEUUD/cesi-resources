@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'view/auth/login_view.dart';
-import 'view/auth/register_view.dart';
+import 'view/layout/header.dart'; // Import du header personnalisé
 
 void main() {
   runApp(const MainApp());
@@ -21,40 +20,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Align(
-          alignment: Alignment.topRight,
-          child: Row(
-            mainAxisAlignment:
-                MainAxisAlignment
-                    .start, 
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
-                },
-                child: const Text('Se connecter'),
-              ),
-              const SizedBox(width: 20), 
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RegisterPage(),
-                    ),
-                  );
-                },
-                child: const Text("S'inscrire"),
-              ),
-            ],
-          ),
-        ),
-      ),
+      appBar: const Header(), // Utilisation du header personnalisé
+      body: const Center(child: Text('Bienvenue sur la page d\'accueil !')),
     );
   }
 }
