@@ -22,13 +22,11 @@ app.get("/users", (req, res) => {
       console.error("Erreur lors de la requête SQL :", err);
       return res.status(500).json(err);
     }
-    console.log("Résultat de la requête :", results); // 👈 Log ici
+    console.log("Résultat de la requête :", results);
     res.json(results);
   });
 });
 
-
-// Lancement du serveur
 app.listen(3000, () => {
   console.log("Backend listening on port 3000");
 });
