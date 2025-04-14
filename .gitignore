@@ -46,3 +46,5 @@ app.*.map.json
 
 # back files
 back/.env
+back/node_modules
+back/package-lock.json
