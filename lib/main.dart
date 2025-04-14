@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const Header(),
-      body: const Center(child: Text('Bienvenue sur la page d\'accueil !')),
+      body: Center(child: Text('Hello World! LE CESI !!! Je fais un test')),
     );
   }
 }
