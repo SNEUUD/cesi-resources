@@ -43,6 +43,7 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Bienvenue ${utilisateur["pseudo"]} !')),
         );
+        Navigator.pop(context);
       } else {
         final data = jsonDecode(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
