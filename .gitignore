@@ -48,3 +48,8 @@ app.*.map.json
 back/.env
 back/node_modules
 back/package-lock.json
+
+#backend
+backend/.env
+backend/node_modules
+backend/package-lock.json
