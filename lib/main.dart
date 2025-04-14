@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'page_accueil.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World! LE CESI !!!'),
-        ),
+    return MaterialApp(
+      title: '(re)sources relationnelles',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primaryColor: const Color(0xFF000080),
+        fontFamily: 'Montserrat',
       ),
+      home: const HomePage(),
     );
   }
 }
