@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,12 +13,49 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  void _login() {
+  void _login() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    print('Email: $email');
-    print('Mot de passe: $password');
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Veuillez remplir tous les champs')),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse(
+          'http://localhost:3000/login',
+        ),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'emailUtilisateur': email,
+          'motDePasseUtilisateur': password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final utilisateur = data['utilisateur'];
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Bienvenue ${utilisateur["pseudo"]} !')),
+        );
+        Navigator.pop(context);
+      } else {
+        final data = jsonDecode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['error'] ?? 'Erreur de connexion')),
+        );
+      }
+    } catch (e) {
+      print('Erreur : $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erreur de connexion au serveur')),
+      );
+    }
   }
 
   @override
