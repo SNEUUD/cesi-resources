@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:resources/view/profile_view.dart';
 import '../auth/login_view.dart';
 import '../auth/register_view.dart';
 
@@ -35,6 +36,16 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                 );
               },
               child: const Text("S'inscrire"),
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilePage()),
+                );
+              },
+              child: const Text('Profile'),
             ),
           ],
         ),
