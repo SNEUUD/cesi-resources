@@ -29,6 +29,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
   final TextEditingController _searchController = TextEditingController();
   List<Category> allCategories = [];
   List<Category> filteredCategories = [];
+  bool showAllCategories = false;
 
   @override
   void initState() {
@@ -139,7 +140,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
               const SizedBox(height: 8),
               // Description
               const Text(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+                'Parcourez l’ensemble des catégories disponibles pour explorer les thématiques proposées. Chaque catégorie regroupe des ressources spécifiques pour vous aider à mieux comprendre un sujet ou approfondir vos connaissances. Utilisez la barre de recherche pour filtrer rapidement selon vos centres d’intérêt.',
                 style: TextStyle(fontSize: 12, color: Colors.black54),
               ),
               const SizedBox(height: 16),
@@ -169,7 +170,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               // Grille de catégories
               Expanded(
                 child: FutureBuilder<List<Category>>(
@@ -185,17 +186,22 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         child: Text('Aucune catégorie trouvée'),
                       );
                     } else {
+                      List<Category> categoriesToDisplay =
+                          showAllCategories
+                              ? filteredCategories
+                              : filteredCategories.take(6).toList();
+
                       return GridView.builder(
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
+                              crossAxisCount: 3,
                               mainAxisSpacing: 16,
                               crossAxisSpacing: 16,
-                              childAspectRatio: 0.9,
+                              childAspectRatio: 2,
                             ),
-                        itemCount: filteredCategories.length,
+                        itemCount: categoriesToDisplay.length,
                         itemBuilder: (context, index) {
-                          Category category = filteredCategories[index];
+                          Category category = categoriesToDisplay[index];
                           return _buildCategoryCard(
                             category.nomCategorie,
                             category.description,
@@ -208,26 +214,32 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   },
                 ),
               ),
+
               // Bouton Voir plus
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Action pour voir plus
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0000CC),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
+              if (filteredCategories.length > 6)
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        showAllCategories = !showAllCategories;
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0000CC),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                    child: Text(
+                      showAllCategories ? 'Voir moins' : 'En voir plus',
                     ),
                   ),
-                  child: const Text('En voir plus'),
                 ),
-              ),
             ],
           ),
         ),
@@ -249,7 +261,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
       ),
       color: bgColor,
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
