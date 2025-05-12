@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'layout/header.dart';
+import 'feed_view.dart'; 
 
 class Category {
   final String nomCategorie;
@@ -247,67 +248,73 @@ class _CategoriesPageState extends State<CategoriesPage> {
     );
   }
 
-  Widget _buildCategoryCard(
-    String title,
-    String description,
-    Color bgColor,
-    Color buttonColor,
-  ) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.shade300),
-      ),
-      color: bgColor,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF0000CC),
+Widget _buildCategoryCard(
+  String title,
+  String description,
+  Color bgColor,
+  Color buttonColor,
+) {
+  return Card(
+    elevation: 0,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+      side: BorderSide(color: Colors.grey.shade300),
+    ),
+    color: bgColor,
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0000CC),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            description,
+            style: const TextStyle(fontSize: 12, color: Colors.black54),
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const Spacer(),
+          Align(
+            alignment: Alignment.centerRight,
+            child: ElevatedButton(
+              onPressed: () {
+                // Navigation vers le FeedView avec la catégorie sélectionnée
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FeedView(categoryName: title),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0000CC),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                minimumSize: const Size(100, 30),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text(
+                'Voir les ressources liées',
+                style: TextStyle(fontSize: 10),
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              description,
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
-              maxLines: 4,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const Spacer(),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Action pour voir les ressources liées
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF0000CC),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  minimumSize: const Size(100, 30),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: const Text(
-                  'Voir les ressources liées',
-                  style: TextStyle(fontSize: 10),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 }

@@ -98,7 +98,7 @@ app.post("/login", (req, res) => {
 
 // Route pour récupérer toutes les catégories avec leurs descriptions
 app.get("/categories", (req, res) => {
-  db.query("SELECT nomCatégorie, descriptionCatégorie FROM Catégories", (err, results) => {
+  db.query("SELECT idCatégorie, nomCatégorie, descriptionCatégorie FROM Catégories", (err, results) => {
     if (err) {
       console.error("Erreur lors de la requête SQL :", err);
       return res.status(500).json({ error: "Erreur serveur" });
@@ -111,4 +111,28 @@ app.get("/categories", (req, res) => {
 
 app.listen(3000, () => {
   console.log("Backend listening on port 3000");
+});
+
+
+// ELIIIIIIIIIOOOOOOOOO
+app.get("/resources/category/:categoryName", (req, res) => {
+  const categoryName = req.params.categoryName;
+
+  // Requête SQL pour récupérer les ressources d'une catégorie spécifique
+  const query = `
+    SELECT r.idRessource,r.titreRessource,r.messageRessource,r.dateRessource,r.imageRessource,u.pseudoUtilisateur,r.statusRessource,c.nomCatégorie
+FROM Ressources r
+JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
+JOIN Utilisateurs u ON r.Utilisateurs_idUtilisateur = u.idUtilisateur
+WHERE c.nomCatégorie = ? AND r.statusRessource = 'affiche';
+  `;
+
+  db.query(query, [categoryName], (err, results) => {
+    if (err) {
+      console.error("Erreur lors de la requête SQL :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+    console.log(`Ressources de la catégorie ${categoryName} récupérées :`, results);
+    res.json(results);
+  });
 });
