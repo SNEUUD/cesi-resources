@@ -35,7 +35,7 @@ class Footer extends StatelessWidget {
                   ),
                   const SizedBox(height: 15.0),
                   const Text(
-                    '© 2024 (re)sources relationnelles',
+                    '© 2025 (re)sources relationnelles',
                     style: TextStyle(color: Color(0xFF000091)),
                   ),
                 ],
