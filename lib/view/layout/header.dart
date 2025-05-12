@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:resources/view/profile_view.dart';
 import '../auth/login_view.dart';
 import '../auth/register_view.dart';
+import '../categories_view.dart';
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
   const Header({super.key});
@@ -15,6 +16,18 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
         children: const [Text('(RE)SOURCES')],
       ),
       actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const CategoriesPage()),
+            );
+          },
+          child: const Text(
+            'Catégories',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
