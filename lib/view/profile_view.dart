@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'layout/header.dart';
+import 'layout/footer.dart'; // Assurez-vous que le chemin est correct
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -67,204 +67,209 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: const Header(),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
-        child: Padding(
-          padding: const EdgeInsets.all(42.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Titre principal
-              const Text(
-                'Mon profil',
-                style: TextStyle(
-                  fontFamily: 'Chillax',
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF0000A0), // Bleu foncé
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Paragraphe d'introduction
-              const Text(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF0000A0), // Bleu foncé
-                ),
-              ),
-              const SizedBox(height: 32),
-              // Container principal
-              Container(
-                padding: const EdgeInsets.all(22),
-                decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFF0000A0)), // Bordure bleue
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Padding pour la section photo et nom
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
-                      child: Row(
-                        children: [
-                          // Avatar rond bleu
-                          Container(
-                            width: 60,
-                            height: 60,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF0000A0), // Bleu foncé
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'OG',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(42.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Titre principal
+                  const Text(
+                    'Mon profil',
+                    style: TextStyle(
+                      fontFamily: 'Chillax',
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0000A0), // Bleu foncé
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Paragraphe d'introduction
+                  const Text(
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF0000A0), // Bleu foncé
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  // Container principal
+                  Container(
+                    padding: const EdgeInsets.all(22),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: const Color(0xFF0000A0)), // Bordure bleue
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Padding pour la section photo et nom
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
+                          child: Row(
+                            children: [
+                              // Avatar rond bleu
+                              Container(
+                                width: 60,
+                                height: 60,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF0000A0), // Bleu foncé
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'OG',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                              const SizedBox(width: 20),
+                              // Nom avec style bleu
+                              Text(
+                                '${prenomController.text} ${nomController.text}',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF0000A0), // Bleu foncé
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 20),
-                          // Nom avec style bleu
-                          Text(
-                            '${prenomController.text} ${nomController.text}',
+                        ),
+                        const SizedBox(height: 16),
+                        // Padding pour le texte descriptif
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                          child: Text(
+                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
                             style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
                               color: Color(0xFF0000A0), // Bleu foncé
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Padding pour le texte descriptif
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                      child: Text(
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF0000A0), // Bleu foncé
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    // Container des détails du profil avec padding horizontal
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
-                      child: ProfileDetailsBox(
-                        isEditing: isEditing,
-                        nomController: nomController,
-                        prenomController: prenomController,
-                        pseudoController: pseudoController,
-                        passwordController: passwordController,
-                        dateNaissanceController: dateNaissanceController,
-                        emailController: emailController,
-                        roleController: roleController,
-                        sexeController: sexeController,
-                        onSave: () {
-                          setState(() {
-                            isEditing = false;
-                            // Ici, vous pourriez également sauvegarder les données
-                            // dans une base de données ou un service d'API
-                            print('Informations enregistrées!');
-                            // Afficher éventuellement un message de confirmation
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Profil mis à jour avec succès!')),
-                            );
-                          });
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    // Padding pour les boutons d'action
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 100),
-                      child: !isEditing
-                          ? Row(
-                        // Si on n'est pas en mode édition, on garde la Row avec les deux boutons
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            onPressed: toggleEditMode,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF0000A0),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                            ),
-                            child: const Text('Modifier mon profil'),
+                        const SizedBox(height: 20),
+                        // Container des détails du profil avec padding horizontal
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
+                          child: ProfileDetailsBox(
+                            isEditing: isEditing,
+                            nomController: nomController,
+                            prenomController: prenomController,
+                            pseudoController: pseudoController,
+                            passwordController: passwordController,
+                            dateNaissanceController: dateNaissanceController,
+                            emailController: emailController,
+                            roleController: roleController,
+                            sexeController: sexeController,
+                            onSave: () {
+                              setState(() {
+                                isEditing = false;
+                                // Ici, vous pourriez également sauvegarder les données
+                                // dans une base de données ou un service d'API
+                                print('Informations enregistrées!');
+                                // Afficher éventuellement un message de confirmation
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Profil mis à jour avec succès!')),
+                                );
+                              });
+                            },
                           ),
-                          const SizedBox(width: 64),
-                          ElevatedButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text('Supprimer le profil'),
-                                    content: const Text('Êtes-vous sûr de vouloir supprimer votre profil ?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Annuler'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          // Action de suppression ici
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Supprimer'),
-                                      ),
-                                    ],
+                        ),
+                        const SizedBox(height: 20),
+                        // Padding pour les boutons d'action
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 100),
+                          child: !isEditing
+                              ? Row(
+                            // Si on n'est pas en mode édition, on garde la Row avec les deux boutons
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: toggleEditMode,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF0000A0),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                ),
+                                child: const Text('Modifier mon profil'),
+                              ),
+                              const SizedBox(width: 64),
+                              ElevatedButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Supprimer le profil'),
+                                        content: const Text('Êtes-vous sûr de vouloir supprimer votre profil ?'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('Annuler'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              // Action de suppression ici
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('Supprimer'),
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   );
                                 },
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFE1000F),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFE1000F),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                ),
+                                child: const Text('Supprimer mon profil'),
                               ),
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            ],
+                          )
+                              : Center(
+                            // Si on est en mode édition, on centre le bouton d'annulation
+                            child: ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  isEditing = false;
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFE1000F),
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              ),
+                              child: const Text('< Annuler'),
                             ),
-                            child: const Text('Supprimer mon profil'),
                           ),
-                        ],
-                      )
-                          : Center(
-                        // Si on est en mode édition, on centre le bouton d'annulation
-                        child: ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              isEditing = false;
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFE1000F),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                          ),
-                          child: const Text('< Annuler'),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            const Footer(), // Ajout du Footer ici
+          ],
         ),
       ),
     );
