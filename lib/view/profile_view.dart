@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'layout/header.dart';
-import 'layout/footer.dart'; // Assurez-vous que le chemin est correct
+import 'layout/footer.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -22,19 +25,226 @@ class _ProfilePageState extends State<ProfilePage> {
   late TextEditingController emailController;
   late TextEditingController roleController;
   late TextEditingController sexeController;
+  late TextEditingController oldPasswordController;
+  late TextEditingController newPasswordController;
+  late TextEditingController confirmPasswordController;
+
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    // Initialisation des contrôleurs avec les valeurs actuelles
-    nomController = TextEditingController(text: 'GIRAULT');
-    prenomController = TextEditingController(text: 'Ophélie');
-    pseudoController = TextEditingController(text: 'ophgrt');
+    // Initialisation des contrôleurs avec les valeurs vides
+    nomController = TextEditingController();
+    prenomController = TextEditingController();
+    pseudoController = TextEditingController();
     passwordController = TextEditingController(text: '********');
-    dateNaissanceController = TextEditingController(text: '07/09/1998');
-    emailController = TextEditingController(text: 'ophgrt@gmail.com');
-    roleController = TextEditingController(text: 'Utilisateur');
-    sexeController = TextEditingController(text: 'Femme');
+    dateNaissanceController = TextEditingController();
+    emailController = TextEditingController();
+    roleController = TextEditingController();
+    sexeController = TextEditingController();
+    oldPasswordController = TextEditingController();
+    newPasswordController = TextEditingController();
+    confirmPasswordController = TextEditingController();
+
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('idUtilisateur');
+
+    if (userId == null) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Impossible de récupérer l\'ID utilisateur')),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost:3000/profil/$userId'),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final utilisateur = data['utilisateur'];
+
+        setState(() {
+          nomController.text = utilisateur['nom'] ?? '';
+          prenomController.text = utilisateur['prénom'] ?? '';
+          pseudoController.text = utilisateur['pseudo'] ?? '';
+          dateNaissanceController.text = utilisateur['dateNaissance'] ?? '';
+          emailController.text = utilisateur['email'] ?? '';
+          sexeController.text = utilisateur['sexe'] ?? '';
+
+          final roleId = utilisateur['role'] ?? 1;
+          roleController.text = roleId == 1 ? 'Utilisateur' : 'Administrateur';
+
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur de connexion: $e')),
+      );
+    }
+  }
+
+  Future<void> _updateUserData() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('idUtilisateur');
+
+    if (userId == null) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Impossible de récupérer l\'ID utilisateur')),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.put(
+        Uri.parse('http://localhost:3000/profil/$userId/edit'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'nom': nomController.text,
+          'prénom': prenomController.text,
+          'pseudo': pseudoController.text,
+          'email': emailController.text,
+        }),
+      );
+
+      setState(() {
+        isLoading = false;
+      });
+
+      if (response.statusCode != 200) {
+        print('Réponse du serveur: ${response.body}');
+        // Puis afficher le message d'erreur
+      }
+
+      if (response.statusCode == 200) {
+        // Recharger les données pour s'assurer que l'affichage est à jour
+        _loadUserData();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profil mis à jour avec succès!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur lors de la mise à jour: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur de connexion: $e')),
+      );
+    }
+  }
+
+  Future<void> _updatePassword() async {
+    // Vérifications basiques
+    if (oldPasswordController.text.isEmpty ||
+        newPasswordController.text.isEmpty ||
+        confirmPasswordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tous les champs doivent être remplis')),
+      );
+      return;
+    }
+
+    if (newPasswordController.text != confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Les nouveaux mots de passe ne correspondent pas')),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('idUtilisateur');
+
+    if (userId == null) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Impossible de récupérer l\'ID utilisateur')),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.put(
+        Uri.parse('http://localhost:3000/profil/$userId/password'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'ancienMotDePasse': oldPasswordController.text,
+          'nouveauMotDePasse': newPasswordController.text,
+        }),
+      );
+
+      setState(() {
+        isLoading = false;
+      });
+
+      if (response.statusCode == 200) {
+        // Réinitialisation des champs de mot de passe
+        oldPasswordController.clear();
+        newPasswordController.clear();
+        confirmPasswordController.clear();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Mot de passe mis à jour avec succès!')),
+        );
+      } else {
+        print('Réponse du serveur: ${response.body}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur lors de la mise à jour du mot de passe: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur de connexion: $e')),
+      );
+    }
   }
 
   @override
@@ -48,6 +258,10 @@ class _ProfilePageState extends State<ProfilePage> {
     emailController.dispose();
     roleController.dispose();
     sexeController.dispose();
+    oldPasswordController.dispose();
+    newPasswordController.dispose();
+    confirmPasswordController.dispose();
+
     super.dispose();
   }
 
@@ -167,18 +381,16 @@ class _ProfilePageState extends State<ProfilePage> {
                             emailController: emailController,
                             roleController: roleController,
                             sexeController: sexeController,
+                            oldPasswordController: oldPasswordController,
+                            newPasswordController: newPasswordController,
+                            confirmPasswordController: confirmPasswordController,
                             onSave: () {
                               setState(() {
                                 isEditing = false;
-                                // Ici, vous pourriez également sauvegarder les données
-                                // dans une base de données ou un service d'API
-                                print('Informations enregistrées!');
-                                // Afficher éventuellement un message de confirmation
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Profil mis à jour avec succès!')),
-                                );
                               });
+                              _updateUserData();
                             },
+                            onPasswordChange: _updatePassword,
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -287,6 +499,10 @@ class ProfileDetailsBox extends StatefulWidget {
   final TextEditingController emailController;
   final TextEditingController roleController;
   final TextEditingController sexeController;
+  final TextEditingController oldPasswordController;
+  final TextEditingController newPasswordController;
+  final TextEditingController confirmPasswordController;
+  final VoidCallback onPasswordChange; // Nouvelle fonction callback
   final VoidCallback onSave; // Nouvelle fonction callback
 
   const ProfileDetailsBox({
@@ -300,7 +516,11 @@ class ProfileDetailsBox extends StatefulWidget {
     required this.emailController,
     required this.roleController,
     required this.sexeController,
+    required this.oldPasswordController,
+    required this.newPasswordController,
+    required this.confirmPasswordController,
     required this.onSave, // Ajout du paramètre requis
+    required this.onPasswordChange, // Ajout du paramètre requis
   }) : super(key: key);
 
   @override
@@ -395,27 +615,41 @@ class _ProfileDetailsBoxState extends State<ProfileDetailsBox> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                _buildField('Ancien mot de passe : ', TextEditingController(), true, isPassword: true),
+                _buildField('Ancien mot de passe : ', widget.oldPasswordController, true, isPassword: true),
                 const SizedBox(height: 10),
-                _buildField('Nouveau mot de passe : ', TextEditingController(), true, isPassword: true),
+                _buildField('Nouveau mot de passe : ', widget.newPasswordController, true, isPassword: true),
                 const SizedBox(height: 10),
-                _buildField('Confirmer le mot de passe : ', TextEditingController(), true, isPassword: true),
+                _buildField('Confirmer le mot de passe : ', widget.confirmPasswordController, true, isPassword: true),
                 const SizedBox(height: 20),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      widget.onSave();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0000A0), // Fond bleu foncé
-                      foregroundColor: Colors.white, // Texte blanc
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: widget.onSave,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0000A0),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      child: const Text('Enregistrer le profil'),
                     ),
-                    child: const Text('Enregistrer les informations'),
-                  ),
+                    const SizedBox(width: 20),
+                    ElevatedButton(
+                      onPressed: widget.onPasswordChange,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0000A0),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      ),
+                      child: const Text('Changer le mot de passe'),
+                    ),
+                  ],
                 ),
               ],
             ),
