@@ -96,6 +96,19 @@ app.post("/login", (req, res) => {
   });
 });
 
+// Route pour récupérer toutes les catégories avec leurs descriptions
+app.get("/categories", (req, res) => {
+  db.query("SELECT nomCatégorie, descriptionCatégorie FROM Catégories", (err, results) => {
+    if (err) {
+      console.error("Erreur lors de la requête SQL :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+    console.log("Catégories récupérées :", results);
+    res.json(results);
+  });
+});
+
+
 app.listen(3000, () => {
   console.log("Backend listening on port 3000");
 });
