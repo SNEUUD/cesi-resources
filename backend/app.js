@@ -34,7 +34,7 @@ app.post("/register", (req, res) => {
     .join("-");
 
   const sql = `
-    INSERT INTO Utilisateurs 
+    INSERT INTO Utilisateurs
     (idUtilisateur, nomUtilisateur, prénomUtilisateur, dateNaissanceUtilisateur, sexeUtilisateur, pseudoUtilisateur, emailUtilisateur, motDePasseUtilisateur, statusUtilisateur, Roles_idRole)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'activé', 1)
   `;
@@ -65,7 +65,7 @@ app.post("/login", (req, res) => {
   const { emailUtilisateur, motDePasseUtilisateur } = req.body;
 
   const sql = `
-    SELECT * FROM Utilisateurs 
+    SELECT * FROM Utilisateurs
     WHERE emailUtilisateur = ? AND motDePasseUtilisateur = ?
   `;
 
@@ -76,11 +76,9 @@ app.post("/login", (req, res) => {
     }
 
     if (results.length === 0) {
-      // Aucun utilisateur trouvé avec ces identifiants
       return res.status(401).json({ error: "Email ou mot de passe incorrect" });
     }
 
-    // Utilisateur trouvé
     const utilisateur = results[0];
     res.status(200).json({
       message: "Connexion réussie",
@@ -96,18 +94,41 @@ app.post("/login", (req, res) => {
   });
 });
 
-// Route pour récupérer toutes les catégories avec leurs descriptions
 app.get("/categories", (req, res) => {
-  db.query("SELECT nomCatégorie, descriptionCatégorie FROM Catégories", (err, results) => {
-    if (err) {
-      console.error("Erreur lors de la requête SQL :", err);
-      return res.status(500).json({ error: "Erreur serveur" });
+  db.query(
+    "SELECT nomCatégorie, descriptionCatégorie FROM Catégories",
+    (err, results) => {
+      if (err) {
+        console.error("Erreur lors de la requête SQL :", err);
+        return res.status(500).json({ error: "Erreur serveur" });
+      }
+      console.log("Catégories récupérées :", results);
+      res.json(results);
     }
-    console.log("Catégories récupérées :", results);
-    res.json(results);
-  });
+  );
 });
 
+app.post("/resources", (req, res) => {
+  const { title, message, date, image, userId, status, category } = req.body;
+
+  const sql = `
+    INSERT INTO Ressources
+    (title, message, date, image, userId, status, category)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(
+    sql,
+    [title, message, date, image, userId, status, category],
+    (err, result) => {
+      if (err) {
+        console.error("Erreur lors de l'ajout de la ressource :", err);
+        return res.status(500).json({ error: "Erreur serveur" });
+      }
+      res.status(201).json({ message: "Ressource ajoutée avec succès !" });
+    }
+  );
+});
 
 app.listen(3000, () => {
   console.log("Backend listening on port 3000");

@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'dart:typed_data';
 import './layout/header.dart';
 
 class Category {
@@ -46,7 +47,7 @@ class _CreateResourcePageState extends State<CreateResourcePage> {
   String _title = '';
   String _message = '';
   DateTime? _selectedDate;
-  File? _selectedImage;
+  Uint8List? _selectedImageBytes;
   String _utilisateur = '';
   String _status = 'affiche';
   String _category = 'Musique';
@@ -77,9 +78,47 @@ class _CreateResourcePageState extends State<CreateResourcePage> {
 
     setState(() {
       if (pickedFile != null) {
-        _selectedImage = File(pickedFile.path);
+        _readImageFile(pickedFile);
       }
     });
+  }
+
+  Future<void> _readImageFile(XFile pickedFile) async {
+    final bytes = await pickedFile.readAsBytes();
+    setState(() {
+      _selectedImageBytes = bytes;
+    });
+  }
+
+  Future<void> _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      String? imageBase64;
+      if (_selectedImageBytes != null) {
+        imageBase64 = base64Encode(_selectedImageBytes!);
+      }
+
+      final response = await http.post(
+        Uri.parse('http://localhost:3000/resources'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'title': _title,
+          'message': _message,
+          'date': _selectedDate?.toIso8601String(),
+          'image': imageBase64,
+          'userId': _utilisateur,
+          'status': _status,
+          'category': _category,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        print('Ressource ajoutée avec succès');
+      } else {
+        print('Erreur lors de l\'ajout de la ressource');
+      }
+    }
   }
 
   @override
@@ -118,28 +157,6 @@ class _CreateResourcePageState extends State<CreateResourcePage> {
                             ? 'Veuillez entrer un message'
                             : null,
                 onSaved: (value) => _message = value!,
-              ),
-              SizedBox(height: 16),
-              TextButton.icon(
-                onPressed: _pickImage,
-                icon: Icon(Icons.image),
-                label: Text('Choisir une image'),
-              ),
-              _selectedImage != null
-                  ? Image.file(_selectedImage!, height: 100)
-                  : Text('Aucune image sélectionnée'),
-              SizedBox(height: 16),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Identifiant utilisateur *',
-                  border: OutlineInputBorder(),
-                ),
-                validator:
-                    (value) =>
-                        value == null || value.isEmpty
-                            ? 'Veuillez entrer un identifiant'
-                            : null,
-                onSaved: (value) => _utilisateur = value!,
               ),
               SizedBox(height: 16),
               DropdownButtonFormField<String>(
@@ -201,18 +218,7 @@ class _CreateResourcePageState extends State<CreateResourcePage> {
               SizedBox(height: 16),
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      print('Titre: $_title');
-                      print('Message: $_message');
-                      print('Date: $_selectedDate');
-                      print('Image: ${_selectedImage?.path}');
-                      print('Utilisateur: $_utilisateur');
-                      print('Statut: $_status');
-                      print('Catégorie: $_category');
-                    }
-                  },
+                  onPressed: _submitForm,
                   child: Text('Enregistrer'),
                 ),
               ),
