@@ -5,6 +5,7 @@ import '../auth/login_view.dart';
 import '../auth/register_view.dart';
 import '../categories_view.dart';
 import '../create_resource_view.dart';
+import '../all_resources_view.dart'; // <-- à créer si besoin
 
 class Header extends StatefulWidget implements PreferredSizeWidget {
   const Header({super.key});
@@ -54,10 +55,7 @@ class _HeaderState extends State<Header> {
       toolbarHeight: 80,
       title: Row(
         children: [
-          Image.asset(
-            'assets/icons/logo.png', // Assure-toi que le chemin est correct
-            height: 40,
-          ),
+          Image.asset('assets/icons/logo.png', height: 40),
           const SizedBox(width: 8),
           const Text(
             '(re)sources relationnelles',
@@ -79,6 +77,18 @@ class _HeaderState extends State<Header> {
           },
           child: const Text(
             'Catégories',
+            style: TextStyle(color: Color(0xFF000091)),
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AllResourcesView()),
+            );
+          },
+          child: const Text(
+            'Ressources',
             style: TextStyle(color: Color(0xFF000091)),
           ),
         ),

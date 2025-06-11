@@ -314,6 +314,36 @@ app.get("/ressources", (req, res) => {
   });
 });
 
+// --- RESSOURCES TOUTES CATEGORIES ---
+app.get("/ressourcesAll", (req, res) => {
+  const sql = `
+    SELECT r.idRessource, r.titreRessource AS titre, r.messageRessource AS description, 
+           r.dateRessource, r.statusRessource, r.imageRessource, c.nomCatégorie AS nomCategorie
+    FROM Ressources r
+    JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
+    ORDER BY r.dateRessource DESC
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Erreur lors de la récupération des ressources :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+
+    // Encoder les images en base64
+    const ressources = results.map((ressource) => {
+      return {
+        ...ressource,
+        imageRessource: ressource.imageRessource
+          ? Buffer.from(ressource.imageRessource).toString("base64")
+          : null,
+      };
+    });
+
+    res.json(ressources);
+  });
+});
+
 // --- LANCEMENT DU SERVEUR ---
 app.listen(3000, () => {
   console.log("Backend listening on port 3000");

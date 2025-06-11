@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class CategoryResourcesPage extends StatelessWidget {
-  final String nomCategorie;
+class AllResourcesView extends StatelessWidget {
+  const AllResourcesView({super.key});
 
-  const CategoryResourcesPage({super.key, required this.nomCategorie});
-
-  Future<List<dynamic>> fetchResources() async {
+  Future<List<dynamic>> fetchAllResources() async {
     final response = await http.get(
-      Uri.parse('http://localhost:3000/ressources?categorie=$nomCategorie'),
+      Uri.parse('http://localhost:3000/ressourcesAll'),
     );
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -22,14 +20,14 @@ class CategoryResourcesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ressources : $nomCategorie'),
+        title: const Text('Toutes les ressources'),
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF000091),
         elevation: 1,
       ),
       backgroundColor: Colors.grey[100],
       body: FutureBuilder<List<dynamic>>(
-        future: fetchResources(),
+        future: fetchAllResources(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -49,13 +47,11 @@ class CategoryResourcesPage extends StatelessWidget {
                 if (ressource['imageRessource'] != null &&
                     ressource['imageRessource'].isNotEmpty) {
                   try {
-                    imageWidget = AspectRatio(
-                      aspectRatio: 1,
-                      child: Image.memory(
-                        base64Decode(ressource['imageRessource']),
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
+                    imageWidget = Image.memory(
+                      base64Decode(ressource['imageRessource']),
+                      width: double.infinity,
+                      height: 300,
+                      fit: BoxFit.cover,
                     );
                   } catch (_) {
                     imageWidget = Container(
@@ -122,6 +118,16 @@ class CategoryResourcesPage extends StatelessWidget {
                                   maxLines: 3,
                                   overflow: TextOverflow.ellipsis,
                                 ),
+                                const SizedBox(height: 10),
+                                if (ressource['nomCategorie'] != null)
+                                  Text(
+                                    "Catégorie : ${ressource['nomCategorie']}",
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.deepPurple,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
                                 const SizedBox(height: 10),
                                 Row(
                                   children: [
