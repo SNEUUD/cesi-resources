@@ -15,6 +15,7 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME,
 });
 
+// --- INSCRIPTION UTILISATEUR ---
 app.post("/register", (req, res) => {
   const {
     nomUtilisateur,
@@ -51,7 +52,7 @@ app.post("/register", (req, res) => {
       emailUtilisateur,
       motDePasseUtilisateur,
     ],
-    (err, result) => {
+    (err) => {
       if (err) {
         console.error("Erreur d'inscription :", err);
         return res.status(500).json({ error: "Erreur serveur" });
@@ -61,6 +62,7 @@ app.post("/register", (req, res) => {
   );
 });
 
+// --- CONNEXION UTILISATEUR ---
 app.post("/login", (req, res) => {
   const { emailUtilisateur, motDePasseUtilisateur } = req.body;
 
@@ -94,42 +96,83 @@ app.post("/login", (req, res) => {
   });
 });
 
+// --- RÉCUPÉRATION DES CATÉGORIES ---
 app.get("/categories", (req, res) => {
   db.query(
-    "SELECT nomCatégorie, descriptionCatégorie FROM Catégories",
+    "SELECT idCatégorie, nomCatégorie, descriptionCatégorie FROM Catégories",
     (err, results) => {
       if (err) {
         console.error("Erreur lors de la requête SQL :", err);
         return res.status(500).json({ error: "Erreur serveur" });
       }
-      console.log("Catégories récupérées :", results);
       res.json(results);
     }
   );
 });
 
 app.post("/resources", (req, res) => {
-  const { title, message, date, image, userId, status, category } = req.body;
+  const {
+    title,
+    message,
+    date,
+    image, // base64
+    userId,
+    status,
+    category,
+  } = req.body;
 
-  const sql = `
-    INSERT INTO Ressources
-    (title, message, date, image, userId, status, category)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `;
+  if (!title || !message || !date) {
+    return res.status(400).json({ error: "Champs requis manquants" });
+  }
 
-  db.query(
-    sql,
-    [title, message, date, image, userId, status, category],
-    (err, result) => {
-      if (err) {
-        console.error("Erreur lors de l'ajout de la ressource :", err);
-        return res.status(500).json({ error: "Erreur serveur" });
-      }
-      res.status(201).json({ message: "Ressource ajoutée avec succès !" });
+  const imageBuffer = image ? Buffer.from(image, "base64") : null;
+
+  // Tu dois ici convertir le nom de la catégorie en son id
+  const categorySql = `SELECT idCatégorie FROM Catégories WHERE nomCatégorie = ?`;
+
+  db.query(categorySql, [category], (err, categoryResults) => {
+    if (err || categoryResults.length === 0) {
+      console.error("Erreur de catégorie :", err);
+      return res.status(400).json({ error: "Catégorie invalide" });
     }
-  );
+
+    const categoryId = categoryResults[0].idCatégorie;
+
+    const sql = `
+      INSERT INTO Ressources (
+        titreRessource,
+        messageRessource,
+        dateRessource,
+        imageRessource,
+        Utilisateurs_idUtilisateur,
+        statusRessource,
+        Catégories_idCatégorie
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+      sql,
+      [
+        title,
+        message,
+        date,
+        imageBuffer,
+        userId || null,
+        status || "affiche",
+        categoryId,
+      ],
+      (err) => {
+        if (err) {
+          console.error("Erreur lors de l'ajout de la ressource :", err);
+          return res.status(500).json({ error: "Erreur serveur" });
+        }
+        res.status(201).json({ message: "Ressource ajoutée avec succès !" });
+      }
+    );
+  });
 });
 
+// --- LANCEMENT DU SERVEUR ---
 app.listen(3000, () => {
   console.log("Backend listening on port 3000");
 });

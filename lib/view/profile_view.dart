@@ -285,7 +285,7 @@ class ProfileDetailsBox extends StatefulWidget {
   final VoidCallback onSave; // Nouvelle fonction callback
 
   const ProfileDetailsBox({
-    Key? key,
+    super.key,
     required this.isEditing,
     required this.nomController,
     required this.prenomController,
@@ -296,7 +296,7 @@ class ProfileDetailsBox extends StatefulWidget {
     required this.roleController,
     required this.sexeController,
     required this.onSave, // Ajout du paramètre requis
-  }) : super(key: key);
+  });
 
   @override
   State<ProfileDetailsBox> createState() => _ProfileDetailsBoxState();

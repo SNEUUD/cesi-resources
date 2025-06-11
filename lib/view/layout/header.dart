@@ -68,20 +68,21 @@ class _HeaderState extends State<Header> {
             style: TextStyle(color: Colors.white),
           ),
         ),
-        TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const CreateResourcePage(),
-              ),
-            );
-          },
-          child: const Text(
-            'Créer une ressource',
-            style: TextStyle(color: Colors.white),
+        if (_pseudo != null) // Affiche uniquement si connecté
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CreateResourcePage(),
+                ),
+              );
+            },
+            child: const Text(
+              'Créer une ressource',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
-        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children:
