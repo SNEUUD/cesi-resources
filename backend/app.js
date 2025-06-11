@@ -28,11 +28,7 @@ app.post("/register", (req, res) => {
   } = req.body;
 
   const idUtilisateur = uuidv4();
-
-  const reformattedDate = dateNaissanceUtilisateur
-    .split("/")
-    .reverse()
-    .join("-");
+  const reformattedDate = dateNaissanceUtilisateur.split("/").reverse().join("-");
 
   const sql = `
     INSERT INTO Utilisateurs
@@ -110,6 +106,7 @@ app.get("/categories", (req, res) => {
   );
 });
 
+// --- AJOUT DE RESSOURCE ---
 app.post("/resources", (req, res) => {
   const {
     title,
@@ -127,7 +124,6 @@ app.post("/resources", (req, res) => {
 
   const imageBuffer = image ? Buffer.from(image, "base64") : null;
 
-  // Tu dois ici convertir le nom de la catégorie en son id
   const categorySql = `SELECT idCatégorie FROM Catégories WHERE nomCatégorie = ?`;
 
   db.query(categorySql, [category], (err, categoryResults) => {
@@ -170,6 +166,119 @@ app.post("/resources", (req, res) => {
       }
     );
   });
+});
+
+// --- PROFIL UTILISATEUR ---
+app.get("/profil/:idUtilisateur", (req, res) => {
+  const { idUtilisateur } = req.params;
+
+  const sql = `
+    SELECT nomUtilisateur as nom, 
+           prénomUtilisateur as prénom, 
+           dateNaissanceUtilisateur as dateNaissance,
+           sexeUtilisateur as sexe, 
+           pseudoUtilisateur as pseudo, 
+           emailUtilisateur as email, 
+           Roles_idRole as role
+    FROM Utilisateurs 
+    WHERE idUtilisateur = ?
+  `;
+
+  db.query(sql, [idUtilisateur], (err, results) => {
+    if (err) {
+      console.error("Erreur lors de la récupération du profil :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+
+    const utilisateur = results[0];
+    if (utilisateur.dateNaissance) {
+      const date = new Date(utilisateur.dateNaissance);
+      utilisateur.dateNaissance = date.toLocaleDateString("fr-FR");
+    }
+
+    res.status(200).json({ utilisateur });
+  });
+});
+
+// --- MODIFIER PROFIL ---
+app.put("/profil/:idUtilisateur/edit", (req, res) => {
+  const { idUtilisateur } = req.params;
+  const { nom, prénom, pseudo, email } = req.body;
+
+  const sql = `
+    UPDATE Utilisateurs
+    SET nomUtilisateur = ?,
+        prénomUtilisateur = ?,
+        pseudoUtilisateur = ?,
+        emailUtilisateur = ?
+    WHERE idUtilisateur = ?
+  `;
+
+  db.query(
+    sql,
+    [nom, prénom, pseudo, email, idUtilisateur],
+    (err, result) => {
+      if (err) {
+        console.error("Erreur lors de la mise à jour du profil :", err);
+        return res.status(500).json({ error: "Erreur serveur" });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+      }
+
+      res.status(200).json({ message: "Profil mis à jour avec succès" });
+    }
+  );
+});
+
+// --- MODIFIER MOT DE PASSE ---
+app.put("/profil/:idUtilisateur/password", (req, res) => {
+  const { idUtilisateur } = req.params;
+  const { ancienMotDePasse, nouveauMotDePasse } = req.body;
+
+  db.query(
+    "SELECT idUtilisateur, motDePasseUtilisateur FROM Utilisateurs WHERE idUtilisateur = ?",
+    [idUtilisateur],
+    (err, results) => {
+      if (err) {
+        console.error("Erreur lors de la récupération de l'utilisateur :", err);
+        return res.status(500).json({ error: "Erreur serveur" });
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+      }
+
+      const utilisateur = results[0];
+      if (utilisateur.motDePasseUtilisateur !== ancienMotDePasse) {
+        return res.status(401).json({ error: "Ancien mot de passe incorrect" });
+      }
+
+      const sql = `
+        UPDATE Utilisateurs
+        SET motDePasseUtilisateur = ?
+        WHERE idUtilisateur = ?
+      `;
+
+      db.query(
+        sql,
+        [nouveauMotDePasse, idUtilisateur],
+        (err) => {
+          if (err) {
+            console.error("Erreur lors de la mise à jour du mot de passe :", err);
+            return res.status(500).json({ error: "Erreur serveur" });
+          }
+
+          res.status(200).json({ message: "Mot de passe mis à jour avec succès" });
+        }
+      );
+    }
+  );
 });
 
 // --- LANCEMENT DU SERVEUR ---

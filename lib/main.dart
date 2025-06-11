@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'view/layout/header.dart';
+import 'view/layout/footer.dart';
 
 void main() {
   runApp(const MainApp());
@@ -19,7 +20,8 @@ class MainApp extends StatelessWidget {
           bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
         ),
       ),
-      home: const HomePage());
+      home: const HomePage(),
+    );
   }
 }
 
@@ -30,7 +32,16 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const Header(),
-      body: Center(child: Text('Hello World! LE CESI !!! Je fais un test')),
+      body: Column(
+        children: [
+          Expanded(
+            child: Center(
+              child: Text('Hello World! LE CESI !!! Je fais un test'),
+            ),
+          ),
+          const Footer(),
+        ],
+      ),
     );
   }
 }
