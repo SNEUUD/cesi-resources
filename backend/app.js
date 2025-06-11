@@ -28,7 +28,10 @@ app.post("/register", (req, res) => {
   } = req.body;
 
   const idUtilisateur = uuidv4();
-  const reformattedDate = dateNaissanceUtilisateur.split("/").reverse().join("-");
+  const reformattedDate = dateNaissanceUtilisateur
+    .split("/")
+    .reverse()
+    .join("-");
 
   const sql = `
     INSERT INTO Utilisateurs
@@ -218,22 +221,18 @@ app.put("/profil/:idUtilisateur/edit", (req, res) => {
     WHERE idUtilisateur = ?
   `;
 
-  db.query(
-    sql,
-    [nom, prénom, pseudo, email, idUtilisateur],
-    (err, result) => {
-      if (err) {
-        console.error("Erreur lors de la mise à jour du profil :", err);
-        return res.status(500).json({ error: "Erreur serveur" });
-      }
-
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "Utilisateur non trouvé" });
-      }
-
-      res.status(200).json({ message: "Profil mis à jour avec succès" });
+  db.query(sql, [nom, prénom, pseudo, email, idUtilisateur], (err, result) => {
+    if (err) {
+      console.error("Erreur lors de la mise à jour du profil :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
     }
-  );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+
+    res.status(200).json({ message: "Profil mis à jour avec succès" });
+  });
 });
 
 // --- MODIFIER MOT DE PASSE ---
@@ -265,20 +264,54 @@ app.put("/profil/:idUtilisateur/password", (req, res) => {
         WHERE idUtilisateur = ?
       `;
 
-      db.query(
-        sql,
-        [nouveauMotDePasse, idUtilisateur],
-        (err) => {
-          if (err) {
-            console.error("Erreur lors de la mise à jour du mot de passe :", err);
-            return res.status(500).json({ error: "Erreur serveur" });
-          }
-
-          res.status(200).json({ message: "Mot de passe mis à jour avec succès" });
+      db.query(sql, [nouveauMotDePasse, idUtilisateur], (err) => {
+        if (err) {
+          console.error("Erreur lors de la mise à jour du mot de passe :", err);
+          return res.status(500).json({ error: "Erreur serveur" });
         }
-      );
+
+        res
+          .status(200)
+          .json({ message: "Mot de passe mis à jour avec succès" });
+      });
     }
   );
+});
+
+// --- RESSOURCES PAR CATÉGORIE ---
+app.get("/ressources", (req, res) => {
+  const { categorie } = req.query;
+  if (!categorie) {
+    return res.status(400).json({ error: "Catégorie manquante" });
+  }
+
+  const sql = `
+    SELECT r.idRessource, r.titreRessource AS titre, r.messageRessource AS description, 
+           r.dateRessource, r.statusRessource, r.imageRessource
+    FROM Ressources r
+    JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
+    WHERE c.nomCatégorie = ?
+    ORDER BY r.dateRessource DESC
+  `;
+
+  db.query(sql, [categorie], (err, results) => {
+    if (err) {
+      console.error("Erreur lors de la récupération des ressources :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+
+    // Encoder les images en base64
+    const ressources = results.map((ressource) => {
+      return {
+        ...ressource,
+        imageRessource: ressource.imageRessource
+          ? Buffer.from(ressource.imageRessource).toString("base64")
+          : null,
+      };
+    });
+
+    res.json(ressources);
+  });
 });
 
 // --- LANCEMENT DU SERVEUR ---
