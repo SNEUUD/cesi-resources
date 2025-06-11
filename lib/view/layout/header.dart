@@ -4,6 +4,7 @@ import 'package:resources/view/profile_view.dart';
 import '../auth/login_view.dart';
 import '../auth/register_view.dart';
 import '../categories_view.dart';
+import '../create_resource_view.dart';
 
 class Header extends StatefulWidget implements PreferredSizeWidget {
   const Header({super.key});
@@ -67,6 +68,21 @@ class _HeaderState extends State<Header> {
             style: TextStyle(color: Colors.white),
           ),
         ),
+        if (_pseudo != null) // Affiche uniquement si connecté
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CreateResourcePage(),
+                ),
+              );
+            },
+            child: const Text(
+              'Créer une ressource',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children:

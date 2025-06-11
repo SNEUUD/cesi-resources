@@ -506,7 +506,7 @@ class ProfileDetailsBox extends StatefulWidget {
   final VoidCallback onSave; // Nouvelle fonction callback
 
   const ProfileDetailsBox({
-    Key? key,
+    super.key,
     required this.isEditing,
     required this.nomController,
     required this.prenomController,
