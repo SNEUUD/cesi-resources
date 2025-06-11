@@ -41,7 +41,6 @@ class _HeaderState extends State<Header> {
       _pseudo = null;
     });
 
-    // Optionnel : message de confirmation
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Déconnecté avec succès')));
@@ -50,10 +49,25 @@ class _HeaderState extends State<Header> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.white,
+      elevation: 0,
+      toolbarHeight: 80,
       title: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: const [Text('(RE)SOURCES')],
+        children: [
+          Image.asset(
+            'assets/icons/logo.png', // Assure-toi que le chemin est correct
+            height: 40,
+          ),
+          const SizedBox(width: 8),
+          const Text(
+            '(re)sources relationnelles',
+            style: TextStyle(
+              color: Color(0xFF000091),
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+        ],
       ),
       actions: [
         TextButton(
@@ -65,76 +79,101 @@ class _HeaderState extends State<Header> {
           },
           child: const Text(
             'Catégories',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Color(0xFF000091)),
           ),
-        ),
-        if (_pseudo != null) // Affiche uniquement si connecté
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const CreateResourcePage(),
-                ),
-              );
-            },
-            child: const Text(
-              'Créer une ressource',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children:
-              _pseudo == null
-                  ? [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginPage(),
-                          ),
-                        );
-                      },
-                      child: const Text('Se connecter'),
-                    ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegisterPage(),
-                          ),
-                        );
-                      },
-                      child: const Text("S'inscrire"),
-                    ),
-                  ]
-                  : [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ProfilePage(),
-                          ),
-                        );
-                      },
-                      child: Text('Connecté : $_pseudo'),
-                    ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                      ),
-                      onPressed: _logout,
-                      child: const Text('Déconnexion'),
-                    ),
-                  ],
         ),
         const SizedBox(width: 10),
+        if (_pseudo == null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF000091),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+              child: const Text(
+                'Se connecter / S’inscrire',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CreateResourcePage(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'Créer une ressource',
+                    style: TextStyle(color: Color(0xFF000091)),
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF000091),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ProfilePage(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'Connecté : $_pseudo',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                  ),
+                  onPressed: _logout,
+                  child: const Text(
+                    'Déconnexion',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        const SizedBox(width: 20),
       ],
     );
   }
