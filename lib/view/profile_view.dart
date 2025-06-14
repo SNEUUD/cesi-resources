@@ -521,7 +521,7 @@ class ProfileDetailsBox extends StatefulWidget {
     required this.confirmPasswordController,
     required this.onSave, // Ajout du paramètre requis
     required this.onPasswordChange, // Ajout du paramètre requis
-  }) : super(key: key);
+  });
 
   @override
   State<ProfileDetailsBox> createState() => _ProfileDetailsBoxState();
