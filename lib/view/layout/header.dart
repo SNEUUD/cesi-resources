@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:resources/view/profile_view.dart';
 import '../auth/login_view.dart';
-import '../auth/register_view.dart';
 import '../categories_view.dart';
 import '../create_resource_view.dart';
 import '../all_resources_view.dart'; // <-- à créer si besoin
+import '../auth/register_view.dart';
 
 class Header extends StatefulWidget implements PreferredSizeWidget {
   const Header({super.key});
