@@ -21,7 +21,7 @@ class Footer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start, // Centre le contenu horizontalement
                 children: [
                   Image.asset(
-                    '/icons/logo.png',
+                    'assets/icons/logo.png',
                     height: 50,
                   ),
                   const SizedBox(height: 15.0),
