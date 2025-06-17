@@ -31,7 +31,7 @@ class _CreateResourcePageState extends State<CreateResourcePage> {
   final _formKey = GlobalKey<FormState>();
   String _title = '';
   String _message = '';
-  DateTime? _selectedDate = DateTime.now();
+  final DateTime _selectedDate = DateTime.now();
   Uint8List? _selectedImageBytes;
   String? _utilisateurId;
   String _status = 'affiche';
