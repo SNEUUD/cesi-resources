@@ -8,17 +8,17 @@ class Footer extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 12.0), // Padding horizontal réduit à 8.0
       alignment: Alignment.center,
       child: Container(
         constraints: const BoxConstraints(maxWidth: 1200),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Répartit l'espace de manière égale
-          crossAxisAlignment: CrossAxisAlignment.start, // Aligne les colonnes en haut
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Flexible(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // Centre le contenu horizontalement
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Image.asset(
                     '/icons/logo.png',
@@ -43,7 +43,7 @@ class Footer extends StatelessWidget {
             ),
             Flexible(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // Centre le contenu horizontalement
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     '(re)sources relationnelles',
@@ -93,7 +93,7 @@ class Footer extends StatelessWidget {
             ),
             Flexible(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // Centre le contenu horizontalement
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'Suivez-nous',
