@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../main.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -26,9 +28,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await http.post(
-        Uri.parse(
-          'http://localhost:3000/login',
-        ),
+        Uri.parse('http://localhost:3000/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'emailUtilisateur': email,
@@ -39,11 +39,21 @@ class _LoginPageState extends State<LoginPage> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final utilisateur = data['utilisateur'];
+        final idUtilisateur = utilisateur['id']; // ou _id selon ton API
+        final pseudo = utilisateur['pseudo'];
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Bienvenue ${utilisateur["pseudo"]} !')),
+        // Sauvegarder l'identifiant et le pseudo en session locale
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('idUtilisateur', idUtilisateur);
+        await prefs.setString('pseudoUtilisateur', pseudo);
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Bienvenue $pseudo !')));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
-        Navigator.pop(context);
       } else {
         final data = jsonDecode(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
