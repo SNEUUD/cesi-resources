@@ -13,17 +13,20 @@ class Footer extends StatelessWidget {
       child: Container(
         constraints: const BoxConstraints(maxWidth: 1200),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Répartit l'espace de manière égale
-          crossAxisAlignment: CrossAxisAlignment.start, // Aligne les colonnes en haut
+          mainAxisAlignment:
+              MainAxisAlignment
+                  .spaceEvenly, // Répartit l'espace de manière égale
+          crossAxisAlignment:
+              CrossAxisAlignment.start, // Aligne les colonnes en haut
           children: [
             Flexible(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // Centre le contenu horizontalement
+                crossAxisAlignment:
+                    CrossAxisAlignment
+                        .start, // Centre le contenu horizontalement
                 children: [
-                  Image.asset(
-                    '/icons/logo.png',
-                    height: 50,
-                  ),
+                  Image.asset('assets/icons/logo.png', height: 50),
+
                   const SizedBox(height: 15.0),
                   const Text(
                     'Vous avez le pouvoir de changer.',
@@ -43,7 +46,9 @@ class Footer extends StatelessWidget {
             ),
             Flexible(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // Centre le contenu horizontalement
+                crossAxisAlignment:
+                    CrossAxisAlignment
+                        .start, // Centre le contenu horizontalement
                 children: [
                   const Text(
                     '(re)sources relationnelles',
@@ -93,7 +98,9 @@ class Footer extends StatelessWidget {
             ),
             Flexible(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // Centre le contenu horizontalement
+                crossAxisAlignment:
+                    CrossAxisAlignment
+                        .start, // Centre le contenu horizontalement
                 children: [
                   const Text(
                     'Suivez-nous',

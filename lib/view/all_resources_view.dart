@@ -28,7 +28,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
 
   Future<List<dynamic>> fetchAllResources() async {
     final response = await http.get(
-      Uri.parse('http://localhost:3000/ressourcesAll'),
+      Uri.parse('http://10.173.129.67:3000/ressourcesAll'),
     );
     if (response.statusCode == 200) {
       List<dynamic> ressources = jsonDecode(response.body);

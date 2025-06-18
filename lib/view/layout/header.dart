@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:resources/view/profile_view.dart';
 import '../auth/login_view.dart';
+import '../auth/register_view.dart';
 import '../categories_view.dart';
 import '../create_resource_view.dart';
-import '../all_resources_view.dart'; // <-- à créer si besoin
-import '../auth/register_view.dart';
+import '../all_resources_view.dart';
 
 class Header extends StatefulWidget implements PreferredSizeWidget {
   const Header({super.key});
@@ -14,7 +14,7 @@ class Header extends StatefulWidget implements PreferredSizeWidget {
   State<Header> createState() => _HeaderState();
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 20);
 }
 
 class _HeaderState extends State<Header> {
@@ -42,9 +42,11 @@ class _HeaderState extends State<Header> {
       _pseudo = null;
     });
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Déconnecté avec succès')));
+    if (context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Déconnecté avec succès')));
+    }
   }
 
   @override
@@ -53,169 +55,93 @@ class _HeaderState extends State<Header> {
       backgroundColor: Colors.white,
       elevation: 0,
       toolbarHeight: 80,
+      titleSpacing: 20,
       title: Row(
         children: [
           Image.asset('assets/icons/logo.png', height: 40),
           const SizedBox(width: 8),
-          const Text(
-            '(re)sources relationnelles',
-            style: TextStyle(
-              color: Color(0xFF000091),
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
+          const Expanded(
+            child: Text(
+              '(re)sources relationnelles',
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Color(0xFF000091),
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
             ),
           ),
         ],
       ),
       actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const CategoriesPage()),
-            );
-          },
-          child: const Text(
-            'Catégories',
-            style: TextStyle(color: Color(0xFF000091)),
-          ),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AllResourcesView()),
-            );
-          },
-          child: const Text(
-            'Ressources',
-            style: TextStyle(color: Color(0xFF000091)),
-          ),
-        ),
-        const SizedBox(width: 10),
-        if (_pseudo == null)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.only(right: 10),
             child: Row(
               children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF000091),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginPage(),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    'Se connecter',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+                _navButton('Catégories', const CategoriesPage()),
+                _navButton('Ressources', const AllResourcesView()),
                 const SizedBox(width: 10),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
+                if (_pseudo == null) ...[
+                  _actionButton(
+                    label: 'Se connecter',
+                    color: const Color(0xFF000091),
+                    onPressed: () => _navigateTo(const LoginPage()),
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterPage(),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    "S'inscrire",
-                    style: TextStyle(color: Colors.white),
+                  const SizedBox(width: 10),
+                  _actionButton(
+                    label: "S'inscrire",
+                    color: Colors.grey,
+                    onPressed: () => _navigateTo(const RegisterPage()),
                   ),
-                ),
-              ],
-            ),
-          )
-        else
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Row(
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CreateResourcePage(),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    'Créer une ressource',
-                    style: TextStyle(color: Color(0xFF000091)),
+                ] else ...[
+                  _navButton('Créer une ressource', const CreateResourcePage()),
+                  _actionButton(
+                    label: 'Connecté : $_pseudo',
+                    color: const Color(0xFF000091),
+                    onPressed: () => _navigateTo(const ProfilePage()),
                   ),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF000091),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
+                  const SizedBox(width: 10),
+                  _actionButton(
+                    label: 'Déconnexion',
+                    color: Colors.red,
+                    onPressed: _logout,
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ProfilePage(),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    'Connecté : $_pseudo',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                  ),
-                  onPressed: _logout,
-                  child: const Text(
-                    'Déconnexion',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+                ],
+                const SizedBox(width: 20),
               ],
             ),
           ),
-        const SizedBox(width: 20),
+        ),
       ],
     );
+  }
+
+  Widget _navButton(String label, Widget page) {
+    return TextButton(
+      onPressed: () => _navigateTo(page),
+      child: Text(label, style: const TextStyle(color: Color(0xFF000091))),
+    );
+  }
+
+  Widget _actionButton({
+    required String label,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      ),
+      onPressed: onPressed,
+      child: Text(label, style: const TextStyle(color: Colors.white)),
+    );
+  }
+
+  void _navigateTo(Widget page) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 }
