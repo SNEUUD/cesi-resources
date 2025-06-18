@@ -173,7 +173,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                     itemBuilder: (context, index) {
                       final ressource = ressources[index];
 
-                      Widget imageWidget;
+                      Widget? imageWidget;
                       if (ressource['imageRessource'] != null &&
                           ressource['imageRessource'].isNotEmpty) {
                         try {
@@ -184,21 +184,12 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                             fit: BoxFit.cover,
                           );
                         } catch (_) {
-                          imageWidget = Container(
-                            height: 300,
-                            color: Colors.grey[300],
-                            child: const Icon(Icons.broken_image, size: 80),
-                          );
+                          imageWidget = null;
                         }
                       } else {
-                        imageWidget = Container(
-                          height: 300,
-                          color: Colors.grey[300],
-                          child: const Icon(
-                            Icons.image_not_supported,
-                            size: 80,
-                          ),
-                        );
+                        imageWidget = null;
+                          
+                
                       }
 
                       return Center(
@@ -216,12 +207,14 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(18),
-                                  ),
-                                  child: imageWidget,
-                                ),
+                                if (imageWidget != null)
+  ClipRRect(
+    borderRadius: const BorderRadius.vertical(
+      top: Radius.circular(18),
+    ),
+    child: imageWidget!,
+  ),
+
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 16,
