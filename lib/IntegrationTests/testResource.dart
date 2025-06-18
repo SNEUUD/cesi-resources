@@ -28,8 +28,6 @@ void main() {
       }),
     );
 
-    print('Status: ${postResponse.statusCode}');
-    print('Body: ${postResponse.body}');
     expect(postResponse.statusCode, anyOf(200, 201));
 
     // 2. Vérification de la présence en base
