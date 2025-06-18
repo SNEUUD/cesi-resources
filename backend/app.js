@@ -368,7 +368,10 @@ app.get("/ressources/user/:idUtilisateur", (req, res) => {
 
   db.query(sql, [idUtilisateur], (err, results) => {
     if (err) {
-      console.error("Erreur lors de la récupération des ressources utilisateur :", err);
+      console.error(
+        "Erreur lors de la récupération des ressources utilisateur :",
+        err
+      );
       return res.status(500).json({ error: "Erreur serveur" });
     }
 
@@ -382,7 +385,6 @@ app.get("/ressources/user/:idUtilisateur", (req, res) => {
     res.status(200).json({ ressources });
   });
 });
-
 
 // --- RESSOURCES TOUTES CATEGORIES ---
 app.get("/ressourcesAll", (req, res) => {
@@ -537,13 +539,21 @@ const imageBuffer = image ? Buffer.from(image, "base64") : null;
       WHERE idRessource = ?
     `;
 
-    db.query(sqlUpdate, [titre, message, idCat, imageBuffer, idRessource], (err) => {
-      if (err) {
-        console.error("Erreur modification ressource :", err);
-        return res.status(500).json({ error: "Erreur serveur" });
+    db.query(
+      sqlUpdate,
+      [titre, message, idCat, imageBuffer, idRessource],
+      (err) => {
+        if (err) {
+          console.error("Erreur modification ressource :", err);
+          return res.status(500).json({ error: "Erreur serveur" });
+        }
+        res
+          .status(200)
+          .json({
+            message: "Ressource modifiée avec succès (statut : masque)",
+          });
       }
-      res.status(200).json({ message: "Ressource modifiée avec succès (statut : masque)" });
-    });
+    );
   });
 });
 
@@ -964,6 +974,26 @@ app.get("/profil/:idUtilisateur", (req, res) => {
   });
 });
 
+// --- CHANGER LE ROLE D'UN UTILISATEUR ---
+app.patch(
+  ["/utilisateurs/:id/role", "/test/utilisateurs/:id/role"],
+  (req, res) => {
+    const conn = getDB(req);
+    const { id } = req.params;
+    const { role } = req.body;
+    conn.query(
+      "UPDATE Utilisateurs SET Roles_idRole = ? WHERE idUtilisateur = ?",
+      [role, id],
+      (err, result) => {
+        if (err) {
+          console.error("Erreur lors du changement de rôle :", err);
+          return res.status(500).json({ error: "Erreur serveur" });
+        }
+        res.json({ message: "Rôle mis à jour" });
+      }
+    );
+  }
+);
 
 // --- LANCEMENT DU SERVEUR ---
 app.listen(3000, () => {
