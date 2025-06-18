@@ -497,6 +497,26 @@ app.patch(
   }
 );
 
+// Supprimer une ressource masquée
+app.delete(
+  ["/resources_admin/:id", "/test/resources_admin/:id"],
+  (req, res) => {
+    const conn = getDB(req);
+    const { id } = req.params;
+    conn.query(
+      "DELETE FROM Ressources WHERE idRessource = ?",
+      [id],
+      (err, result) => {
+        if (err) {
+          console.error("Erreur lors de la suppression de la ressource :", err);
+          return res.status(500).json({ error: "Erreur serveur" });
+        }
+        res.json({ message: "Ressource supprimée" });
+      }
+    );
+  }
+);
+
 // --- LANCEMENT DU SERVEUR ---
 app.listen(3000, () => {
   console.log(`Backend (${environment}) listening on port 3000`);
