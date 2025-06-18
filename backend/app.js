@@ -327,8 +327,9 @@ app.get(["/ressources", "/test/ressources"], (req, res) => {
     SELECT r.idRessource, r.titreRessource AS titre, r.messageRessource AS description,
            r.dateRessource, r.statusRessource, r.imageRessource
     FROM Ressources r
-           JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
-    WHERE c.nomCatégorie = ?
+    JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
+    WHERE c.nomCatégorie = ? and r.statusRessource = 'affiche'
+
     ORDER BY r.dateRessource DESC
   `;
 
@@ -350,13 +351,47 @@ app.get(["/ressources", "/test/ressources"], (req, res) => {
   });
 });
 
-// --- TOUTES LES RESSOURCES ---
-app.get(["/ressourcesAll", "/test/ressourcesAll"], (req, res) => {
+// --- RESSOURCES PAR UTILISATEUR ---
+app.get("/ressources/user/:idUtilisateur", (req, res) => {
+  const { idUtilisateur } = req.params;
+
+  const sql = `
+    SELECT r.idRessource, r.titreRessource AS titre, r.messageRessource AS description, 
+           r.dateRessource, r.statusRessource, r.imageRessource, c.nomCatégorie AS nomCategorie
+    FROM Ressources r
+    JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
+    WHERE r.Utilisateurs_idUtilisateur = ?
+    ORDER BY r.dateRessource DESC
+  `;
+
+  db.query(sql, [idUtilisateur], (err, results) => {
+    if (err) {
+      console.error("Erreur lors de la récupération des ressources utilisateur :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+
+    const ressources = results.map((ressource) => ({
+      ...ressource,
+      imageRessource: ressource.imageRessource
+        ? Buffer.from(ressource.imageRessource).toString("base64")
+        : null,
+    }));
+
+    res.status(200).json({ ressources });
+  });
+});
+
+
+// --- RESSOURCES TOUTES CATEGORIES ---
+app.get("/ressourcesAll", (req, res) => {
+
   const sql = `
     SELECT r.idRessource, r.titreRessource AS titre, r.messageRessource AS description,
            r.dateRessource, r.statusRessource, r.imageRessource, c.nomCatégorie AS nomCategorie
     FROM Ressources r
-           JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
+    JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
+    WHERE r.statusRessource = 'affiche'
+
     ORDER BY r.dateRessource DESC
   `;
 
@@ -472,6 +507,54 @@ app.get(["/resources_admin", "/test/resources_admin"], (req, res) => {
         : null,
     }));
     res.json(ressources);
+  });
+});
+
+// --- MODIFIER UNE RESSOURCE ---
+app.put("/ressources/:idRessource", (req, res) => {
+  const { idRessource } = req.params;
+  const { titre, message, categorie, image } = req.body;
+
+  const sqlCat = `SELECT idCatégorie FROM Catégories WHERE nomCatégorie = ?`;
+  db.query(sqlCat, [categorie], (err, results) => {
+    if (err || results.length === 0) {
+      return res.status(400).json({ error: "Catégorie invalide" });
+    }
+
+    const idCat = results[0].idCatégorie;
+    const imageBuffer = image ? Buffer.from(image, "base64") : null;
+
+    const sqlUpdate = `
+      UPDATE Ressources
+      SET titreRessource = ?, 
+          messageRessource = ?, 
+          Catégories_idCatégorie = ?, 
+          statusRessource = 'masque',
+          imageRessource = ?
+      WHERE idRessource = ?
+    `;
+
+    db.query(sqlUpdate, [titre, message, idCat, imageBuffer, idRessource], (err) => {
+      if (err) {
+        console.error("Erreur modification ressource :", err);
+        return res.status(500).json({ error: "Erreur serveur" });
+      }
+      res.status(200).json({ message: "Ressource modifiée avec succès (statut : masque)" });
+    });
+  });
+});
+
+// --- SUPPRIMER UNE RESSOURCE ---
+app.delete("/ressources/:idRessource", (req, res) => {
+  const { idRessource } = req.params;
+  const sql = `DELETE FROM Ressources WHERE idRessource = ?`;
+
+  db.query(sql, [idRessource], (err) => {
+    if (err) {
+      console.error("Erreur suppression ressource :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+    res.status(200).json({ message: "Ressource supprimée avec succès" });
   });
 });
 
