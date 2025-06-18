@@ -392,28 +392,7 @@ Center(
     ),
   ),
 ),
-Center(
-  child: ElevatedButton.icon(
-    onPressed: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ResourcesUserView(),
-        ),
-      );
-    },
-    icon: Icon(Icons.folder, color: Colors.white),
-    label: Text('Mes Ressources'),
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Color(0xFF0000A0),
-      foregroundColor: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
-      ),
-    ),
-  ),
-),
+
 
 
                         const SizedBox(height: 20),
