@@ -77,7 +77,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
     try {
       // Remplacez l'URL par celle de votre API
       final response = await http.get(
-        Uri.parse('http://localhost:3000/categories'),
+        Uri.parse('http://10.173.128.242:3000/categories'),
       );
 
       if (response.statusCode == 200) {

@@ -70,7 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:3000/profil/$userId'),
+        Uri.parse('http://10.173.128.242:3000/profil/$userId'),
       );
 
       if (response.statusCode == 200) {
@@ -128,7 +128,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     try {
       final response = await http.put(
-        Uri.parse('http://localhost:3000/profil/$userId/edit'),
+        Uri.parse('http://10.173.128.242:3000/profil/$userId/edit'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -208,7 +208,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     try {
       final response = await http.put(
-        Uri.parse('http://localhost:3000/profil/$userId/password'),
+        Uri.parse('http://10.173.128.242:3000/profil/$userId/password'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
