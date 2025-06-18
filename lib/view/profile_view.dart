@@ -394,6 +394,7 @@ Center(
 ),
 
 
+
                         const SizedBox(height: 20),
                         // Container des détails du profil avec padding horizontal
                         Padding(
