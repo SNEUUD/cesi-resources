@@ -100,7 +100,7 @@ class _CreateResourcePageState extends State<CreateResourcePage> {
       body: jsonEncode({
         'title': _title,
         'message': _message,
-        'date': _selectedDate?.toIso8601String(),
+        'date': _selectedDate.toIso8601String(),
         'image': imageBase64,
         'userId': _utilisateurId,
         'status': _status,

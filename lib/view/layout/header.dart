@@ -6,6 +6,7 @@ import '../categories_view.dart';
 import '../create_resource_view.dart';
 import '../all_resources_view.dart'; // <-- à créer si besoin
 import '../auth/register_view.dart';
+import '../admin/users_admin_page.dart';
 
 class Header extends StatefulWidget implements PreferredSizeWidget {
   const Header({super.key});
@@ -19,6 +20,7 @@ class Header extends StatefulWidget implements PreferredSizeWidget {
 
 class _HeaderState extends State<Header> {
   String? _pseudo;
+  String? _roleId;
 
   @override
   void initState() {
@@ -29,8 +31,10 @@ class _HeaderState extends State<Header> {
   Future<void> _loadSession() async {
     final prefs = await SharedPreferences.getInstance();
     final pseudo = prefs.getString('pseudoUtilisateur');
+    final roleId = prefs.getInt('roleUtilisateur');
     setState(() {
       _pseudo = pseudo;
+      _roleId = roleId?.toString();
     });
   }
 
@@ -38,8 +42,10 @@ class _HeaderState extends State<Header> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('pseudoUtilisateur');
     await prefs.remove('idUtilisateur');
+    await prefs.remove('roleUtilisateur');
     setState(() {
       _pseudo = null;
+      _roleId = null;
     });
 
     ScaffoldMessenger.of(
@@ -57,14 +63,6 @@ class _HeaderState extends State<Header> {
         children: [
           Image.asset('assets/icons/logo.png', height: 40),
           const SizedBox(width: 8),
-          const Text(
-            '(re)sources relationnelles',
-            style: TextStyle(
-              color: Color(0xFF000091),
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
         ],
       ),
       actions: [
@@ -169,6 +167,33 @@ class _HeaderState extends State<Header> {
                     style: TextStyle(color: Color(0xFF000091)),
                   ),
                 ),
+                // Affiche le bouton "Administration" si le rôle est 2
+                if (_roleId == '2')
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const UsersAdminPage(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'Administration',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                const SizedBox(width: 10),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF000091),
