@@ -422,6 +422,27 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                 ),
+                                                if (res['categorie'] != null)
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                          top: 2.0,
+                                                          bottom: 6.0,
+                                                        ),
+                                                    child: Text(
+                                                      "Catégorie : ${res['categorie']}",
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color:
+                                                            Colors.deepPurple,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
                                                 const SizedBox(height: 8),
                                                 Text(
                                                   res['message'] ?? '',
