@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../create_resource_view.dart';
 
 class UsersAdminPage extends StatefulWidget {
   const UsersAdminPage({super.key});
@@ -124,11 +125,29 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
     }
   }
 
+  Future<void> deleteResource(String resourceId) async {
+    final response = await http.delete(
+      Uri.parse('http://localhost:3000/resources_admin/$resourceId'),
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        futureMaskedResources = fetchMaskedResources();
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Ressource supprimée')));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erreur lors de la suppression')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gestion des utilisateurs & ressources masquées'),
+        title: const Text('Gestion des utilisateurs & ressources à valider'),
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF000091),
         elevation: 1,
@@ -256,15 +275,42 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    child: Text(
-                      "Ressources masquées",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Color(0xFF000091),
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 8,
+                    ),
+                    child: Row(
+                      children: [
+                        const Text(
+                          "Ressources à valider",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Color(0xFF000091),
+                          ),
+                        ),
+                        const Spacer(),
+                        ElevatedButton.icon(
+                          icon: const Icon(Icons.add),
+                          label: const Text('Créer une ressource'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF000091),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => const CreateResourcePage(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ),
                   Expanded(
@@ -283,7 +329,7 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
                         } else if (!snapshot.hasData ||
                             snapshot.data!.isEmpty) {
                           return const Center(
-                            child: Text('Aucune ressource masquée.'),
+                            child: Text('Aucune ressource à valider.'),
                           );
                         } else {
                           final resources = snapshot.data!;
@@ -439,6 +485,32 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
                                                                 .toString(),
                                                           ),
                                                     ),
+                                                    const SizedBox(width: 8),
+                                                    ElevatedButton.icon(
+                                                      icon: const Icon(
+                                                        Icons.delete,
+                                                        color: Colors.white,
+                                                      ),
+                                                      label: const Text(
+                                                        'Supprimer',
+                                                      ),
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            Colors.red,
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                12,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                      onPressed:
+                                                          () => deleteResource(
+                                                            res['idRessource']
+                                                                .toString(),
+                                                          ),
+                                                    ),
+                                                    const SizedBox(width: 12),
                                                   ],
                                                 ),
                                               ],
