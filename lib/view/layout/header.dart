@@ -168,7 +168,7 @@ class _HeaderState extends State<Header> {
                   ),
                 ),
                 // Affiche le bouton "Administration" si le rôle est 2
-                if (_roleId == '2')
+                if (_roleId == '2' || _roleId == '3')
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orange,
