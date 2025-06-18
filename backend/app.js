@@ -195,14 +195,14 @@ app.get(
     const conn = getDB(req);
 
     const sql = `
-    SELECT nomUtilisateur as nom, 
-           prénomUtilisateur as prénom, 
+    SELECT nomUtilisateur as nom,
+           prénomUtilisateur as prénom,
            dateNaissanceUtilisateur as dateNaissance,
-           sexeUtilisateur as sexe, 
-           pseudoUtilisateur as pseudo, 
-           emailUtilisateur as email, 
+           sexeUtilisateur as sexe,
+           pseudoUtilisateur as pseudo,
+           emailUtilisateur as email,
            Roles_idRole as role
-    FROM Utilisateurs 
+    FROM Utilisateurs
     WHERE idUtilisateur = ?
   `;
 
@@ -331,7 +331,6 @@ app.get(["/ressources", "/test/ressources"], (req, res) => {
     FROM Ressources r
     JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
     WHERE c.nomCatégorie = ? and r.statusRessource = 'affiche'
-
     ORDER BY r.dateRessource DESC
   `;
 
@@ -358,7 +357,7 @@ app.get("/ressources/user/:idUtilisateur", (req, res) => {
   const { idUtilisateur } = req.params;
 
   const sql = `
-    SELECT r.idRessource, r.titreRessource AS titre, r.messageRessource AS description, 
+    SELECT r.idRessource, r.titreRessource AS titre, r.messageRessource AS description,
            r.dateRessource, r.statusRessource, r.imageRessource, c.nomCatégorie AS nomCategorie
     FROM Ressources r
     JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
@@ -531,9 +530,9 @@ const imageBuffer = image ? Buffer.from(image, "base64") : null;
 
     const sqlUpdate = `
       UPDATE Ressources
-      SET titreRessource = ?, 
-          messageRessource = ?, 
-          Catégories_idCatégorie = ?, 
+      SET titreRessource = ?,
+          messageRessource = ?,
+          Catégories_idCatégorie = ?,
           statusRessource = 'masque',
           imageRessource = ?
       WHERE idRessource = ?
@@ -547,11 +546,9 @@ const imageBuffer = image ? Buffer.from(image, "base64") : null;
           console.error("Erreur modification ressource :", err);
           return res.status(500).json({ error: "Erreur serveur" });
         }
-        res
-          .status(200)
-          .json({
-            message: "Ressource modifiée avec succès (statut : masque)",
-          });
+        res.status(200).json({
+          message: "Ressource modifiée avec succès (statut : masque)",
+        });
       }
     );
   });
@@ -560,14 +557,33 @@ const imageBuffer = image ? Buffer.from(image, "base64") : null;
 // --- SUPPRIMER UNE RESSOURCE ---
 app.delete("/ressources/:idRessource", (req, res) => {
   const { idRessource } = req.params;
-  const sql = `DELETE FROM Ressources WHERE idRessource = ?`;
 
-  db.query(sql, [idRessource], (err) => {
+  // D'abord, supprimez les commentaires associés
+  const deleteCommentsSql =
+    "DELETE FROM Commentaires WHERE Ressources_idRessource = ?";
+  db.query(deleteCommentsSql, [idRessource], (err, result) => {
     if (err) {
-      console.error("Erreur suppression ressource :", err);
-      return res.status(500).json({ error: "Erreur serveur" });
+      console.error("Erreur lors de la suppression des commentaires :", err);
+      return res
+        .status(500)
+        .json({
+          error: "Erreur serveur lors de la suppression des commentaires",
+        });
     }
-    res.status(200).json({ message: "Ressource supprimée avec succès" });
+
+    // Ensuite, supprimez la ressource
+    const deleteResourceSql = "DELETE FROM Ressources WHERE idRessource = ?";
+    db.query(deleteResourceSql, [idRessource], (err, result) => {
+      if (err) {
+        console.error("Erreur lors de la suppression de la ressource :", err);
+        return res
+          .status(500)
+          .json({
+            error: "Erreur serveur lors de la suppression de la ressource",
+          });
+      }
+      res.status(200).json({ message: "Ressource supprimée avec succès" });
+    });
   });
 });
 
@@ -599,17 +615,34 @@ app.delete(
   (req, res) => {
     const conn = getDB(req);
     const { id } = req.params;
-    conn.query(
-      "DELETE FROM Ressources WHERE idRessource = ?",
-      [id],
-      (err, result) => {
+
+    // D'abord, supprimez les commentaires associés
+    const deleteCommentsSql =
+      "DELETE FROM Commentaires WHERE Ressources_idRessource = ?";
+    conn.query(deleteCommentsSql, [id], (err, result) => {
+      if (err) {
+        console.error("Erreur lors de la suppression des commentaires :", err);
+        return res
+          .status(500)
+          .json({
+            error: "Erreur serveur lors de la suppression des commentaires",
+          });
+      }
+
+      // Ensuite, supprimez la ressource
+      const deleteResourceSql = "DELETE FROM Ressources WHERE idRessource = ?";
+      conn.query(deleteResourceSql, [id], (err, result) => {
         if (err) {
           console.error("Erreur lors de la suppression de la ressource :", err);
-          return res.status(500).json({ error: "Erreur serveur" });
+          return res
+            .status(500)
+            .json({
+              error: "Erreur serveur lors de la suppression de la ressource",
+            });
         }
         res.json({ message: "Ressource supprimée" });
-      }
-    );
+      });
+    });
   }
 );
 
