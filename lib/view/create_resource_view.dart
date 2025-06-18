@@ -34,7 +34,7 @@ class _CreateResourcePageState extends State<CreateResourcePage> {
   final DateTime _selectedDate = DateTime.now();
   Uint8List? _selectedImageBytes;
   String? _utilisateurId;
-  String _status = 'affiche';
+  String _status = 'masque'; // <-- Forcé à 'masque'
   String _category = 'Musique';
   bool isLoading = false;
 
@@ -100,7 +100,7 @@ class _CreateResourcePageState extends State<CreateResourcePage> {
       body: jsonEncode({
         'title': _title,
         'message': _message,
-        'date': _selectedDate?.toIso8601String(),
+        'date': _selectedDate.toIso8601String(),
         'image': imageBase64,
         'userId': _utilisateurId,
         'status': _status,
@@ -167,24 +167,6 @@ class _CreateResourcePageState extends State<CreateResourcePage> {
                             ? 'Veuillez entrer un message'
                             : null,
                 onSaved: (value) => _message = value!,
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _status,
-                items:
-                    ['affiche', 'masque', 'exploite', 'suspendu']
-                        .map(
-                          (status) => DropdownMenuItem(
-                            value: status,
-                            child: Text(status),
-                          ),
-                        )
-                        .toList(),
-                onChanged: (val) => setState(() => _status = val!),
-                decoration: const InputDecoration(
-                  labelText: 'Statut',
-                  border: OutlineInputBorder(),
-                ),
               ),
               const SizedBox(height: 16),
               FutureBuilder<List<Category>>(
