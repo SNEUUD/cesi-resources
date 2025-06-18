@@ -88,11 +88,9 @@ app.post(["/login", "/test/login"], (req, res) => {
 
     // Vérification du statut
     if (utilisateur.statusUtilisateur === "désactivé") {
-      return res
-        .status(403)
-        .json({
-          error: "Compte suspendu. Veuillez contacter l'administrateur.",
-        });
+      return res.status(403).json({
+        error: "Compte suspendu. Veuillez contacter l'administrateur.",
+      });
     }
 
     res.status(200).json({
@@ -446,6 +444,58 @@ app.delete(["/utilisateurs/:id", "/test/utilisateurs/:id"], (req, res) => {
     }
   );
 });
+
+// --- RESSOURCES MASQUÉES (ADMIN) ---
+app.get(["/resources_admin", "/test/resources_admin"], (req, res) => {
+  const conn = getDB(req);
+  const sql = `
+    SELECT r.idRessource, r.titreRessource AS title, r.messageRessource AS message,
+           r.dateRessource AS date, r.statusRessource AS status, r.imageRessource AS image,
+           c.nomCatégorie AS categorie
+    FROM Ressources r
+    JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
+    WHERE r.statusRessource = 'masque'
+    ORDER BY r.dateRessource DESC
+  `;
+  conn.query(sql, (err, results) => {
+    if (err) {
+      console.error(
+        "Erreur lors de la récupération des ressources masquées :",
+        err
+      );
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+    const ressources = results.map((ressource) => ({
+      ...ressource,
+      image: ressource.image
+        ? Buffer.from(ressource.image).toString("base64")
+        : null,
+    }));
+    res.json(ressources);
+  });
+});
+
+// Valider une ressource masquée
+app.patch(
+  ["/resources_admin/:id/valider", "/test/resources_admin/:id/valider"],
+  (req, res) => {
+    const conn = getDB(req);
+    const { id } = req.params;
+    // Si rien n'est envoyé, on force à 'affiche'
+    const status = req.body.statusRessource || "affiche";
+    conn.query(
+      "UPDATE Ressources SET statusRessource = ? WHERE idRessource = ?",
+      [status, id],
+      (err, result) => {
+        if (err) {
+          console.error("Erreur lors de la validation de la ressource :", err);
+          return res.status(500).json({ error: "Erreur serveur" });
+        }
+        res.json({ message: "Ressource validée" });
+      }
+    );
+  }
+);
 
 // --- LANCEMENT DU SERVEUR ---
 app.listen(3000, () => {
