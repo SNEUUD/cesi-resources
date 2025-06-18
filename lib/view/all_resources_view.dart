@@ -302,11 +302,6 @@ class _AllResourcesViewState extends State<AllResourcesView> {
         title: Row(
           children: [
             Image.asset('assets/icons/logo.png', height: 40),
-            const SizedBox(width: 12),
-            const Text(
-              'Toutes les ressources',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-            ),
           ],
         ),
         backgroundColor: Colors.white,
@@ -324,6 +319,11 @@ class _AllResourcesViewState extends State<AllResourcesView> {
       backgroundColor: grisClair,
       body: Column(
         children: [
+          const SizedBox(width: 12),
+          const Text(
+            'Toutes les ressources',
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 30, color: bleuFrance, height: 1.2),
+          ),
           // Barre de contrôles
           Container(
             color: Colors.white,

@@ -274,10 +274,17 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  // Fonction pour déterminer si on est sur mobile
+  bool _isMobile(BuildContext context) {
+    return MediaQuery.of(context).size.width < 768;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isMobile = _isMobile(context);
     // Valeur de padding horizontal commune pour tous les éléments
-    const double horizontalPadding = 20.0;
+    final double horizontalPadding = isMobile ? 16.0 : 20.0;
+    final double mainPadding = isMobile ? 16.0 : 42.0;
 
     return Scaffold(
       appBar: const Header(),
@@ -286,33 +293,33 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(42.0),
+              padding: EdgeInsets.all(mainPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Titre principal
-                  const Text(
+                  Text(
                     'Mon profil',
                     style: TextStyle(
                       fontFamily: 'Chillax',
-                      fontSize: 24,
+                      fontSize: isMobile ? 20 : 24,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF0000A0), // Bleu foncé
                     ),
                   ),
                   const SizedBox(height: 16),
                   // Paragraphe d'introduction
-                  const Text(
+                  Text(
                     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: isMobile ? 12 : 14,
                       color: Color(0xFF0000A0), // Bleu foncé
                     ),
                   ),
                   const SizedBox(height: 32),
                   // Container principal
                   Container(
-                    padding: const EdgeInsets.all(22),
+                    padding: EdgeInsets.all(isMobile ? 16 : 22),
                     decoration: BoxDecoration(
                       border: Border.all(color: const Color(0xFF0000A0)), // Bordure bleue
                       borderRadius: BorderRadius.circular(8),
@@ -322,8 +329,43 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         // Padding pour la section photo et nom
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
-                          child: Row(
+                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                          child: isMobile
+                              ? Column(
+                            children: [
+                              // Avatar rond bleu
+                              Container(
+                                width: 60,
+                                height: 60,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF0000A0), // Bleu foncé
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'OG',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              // Nom avec style bleu
+                              Text(
+                                '${prenomController.text} ${nomController.text}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF0000A0), // Bleu foncé
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          )
+                              : Row(
                             children: [
                               // Avatar rond bleu
                               Container(
@@ -359,48 +401,49 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         const SizedBox(height: 16),
                         // Padding pour le texte descriptif
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                           child: Text(
                             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: isMobile ? 12 : 14,
                               color: Color(0xFF0000A0), // Bleu foncé
                             ),
                           ),
                         ),
                         const SizedBox(height: 16),
-Center(
-  child: ElevatedButton.icon(
-    onPressed: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ResourcesUserView(),
-        ),
-      );
-    },
-    icon: Icon(Icons.folder, color: Colors.white),
-    label: Text('Mes Ressources'),
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Color(0xFF0000A0),
-      foregroundColor: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
-      ),
-    ),
-  ),
-),
-
-
-
+                        Center(
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const ResourcesUserView(),
+                                ),
+                              );
+                            },
+                            icon: Icon(Icons.folder, color: Colors.white),
+                            label: Text('Mes Ressources'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF0000A0),
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: isMobile ? 16 : 24,
+                                  vertical: 12
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                          ),
+                        ),
                         const SizedBox(height: 20),
                         // Container des détails du profil avec padding horizontal
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
+                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                           child: ProfileDetailsBox(
                             isEditing: isEditing,
+                            isMobile: isMobile,
                             nomController: nomController,
                             prenomController: prenomController,
                             pseudoController: pseudoController,
@@ -424,10 +467,72 @@ Center(
                         const SizedBox(height: 20),
                         // Padding pour les boutons d'action
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 100),
+                          padding: EdgeInsets.symmetric(horizontal: isMobile ? 0 : 100),
                           child: !isEditing
-                              ? Row(
-                            // Si on n'est pas en mode édition, on garde la Row avec les deux boutons
+                              ? isMobile
+                              ? Column(
+                            // Version mobile : boutons en colonne
+                            children: [
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: toggleEditMode,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF0000A0),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                  ),
+                                  child: const Text('Modifier mon profil'),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('Supprimer le profil'),
+                                          content: const Text('Êtes-vous sûr de vouloir supprimer votre profil ?'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('Annuler'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                // Action de suppression ici
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('Supprimer'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFE1000F),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                  ),
+                                  child: const Text('Supprimer mon profil'),
+                                ),
+                              ),
+                            ],
+                          )
+                              : Row(
+                            // Version desktop : boutons en ligne
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ElevatedButton(
@@ -484,21 +589,24 @@ Center(
                           )
                               : Center(
                             // Si on est en mode édition, on centre le bouton d'annulation
-                            child: ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  isEditing = false;
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFE1000F),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
+                            child: SizedBox(
+                              width: isMobile ? double.infinity : null,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    isEditing = false;
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFE1000F),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                                 ),
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                child: const Text('< Annuler'),
                               ),
-                              child: const Text('< Annuler'),
                             ),
                           ),
                         ),
@@ -519,6 +627,7 @@ Center(
 // Widget séparé pour le container des détails du profil
 class ProfileDetailsBox extends StatefulWidget {
   final bool isEditing;
+  final bool isMobile;
   final TextEditingController nomController;
   final TextEditingController prenomController;
   final TextEditingController pseudoController;
@@ -536,6 +645,7 @@ class ProfileDetailsBox extends StatefulWidget {
   const ProfileDetailsBox({
     super.key,
     required this.isEditing,
+    required this.isMobile,
     required this.nomController,
     required this.prenomController,
     required this.pseudoController,
@@ -559,7 +669,7 @@ class _ProfileDetailsBoxState extends State<ProfileDetailsBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(widget.isMobile ? 16 : 20),
       decoration: BoxDecoration(
         border: Border.all(color: const Color(0xFF0000A0)), // Bordure bleue
         borderRadius: BorderRadius.circular(8),
@@ -570,21 +680,21 @@ class _ProfileDetailsBoxState extends State<ProfileDetailsBox> {
           // Titre du bloc de détails
           Row(
             children: [
-              const Text(
+              Text(
                 'Détails du profil',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: widget.isMobile ? 16 : 18,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF0000A0), // Bleu foncé
                 ),
               ),
               if (widget.isEditing)
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(left: 10),
                   child: Text(
                     '(Mode édition)',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: widget.isMobile ? 12 : 14,
                       fontStyle: FontStyle.italic,
                       color: Color(0xFF0000A0),
                     ),
@@ -593,8 +703,30 @@ class _ProfileDetailsBoxState extends State<ProfileDetailsBox> {
             ],
           ),
           const SizedBox(height: 20),
-          // Grille de détails en 2 colonnes
-          Row(
+          // Grille de détails - responsive
+          widget.isMobile
+              ? Column(
+            // Version mobile : tous les champs en colonne
+            children: [
+              _buildField('Nom : ', widget.nomController, widget.isEditing),
+              const SizedBox(height: 16),
+              _buildField('Prénom : ', widget.prenomController, widget.isEditing),
+              const SizedBox(height: 16),
+              _buildField('Pseudo : ', widget.pseudoController, widget.isEditing),
+              const SizedBox(height: 16),
+              _buildField('Mot de passe : ', widget.passwordController, widget.isEditing, isPassword: true, enabled: false),
+              const SizedBox(height: 16),
+              _buildField('Date de naissance : ', widget.dateNaissanceController, widget.isEditing, enabled: false),
+              const SizedBox(height: 16),
+              _buildField('Email : ', widget.emailController, widget.isEditing),
+              const SizedBox(height: 16),
+              _buildField('Rôle : ', widget.roleController, widget.isEditing, enabled: false),
+              const SizedBox(height: 16),
+              _buildField('Sexe : ', widget.sexeController, widget.isEditing, enabled: false),
+            ],
+          )
+              : Row(
+            // Version desktop : 2 colonnes
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Colonne de gauche
@@ -634,10 +766,10 @@ class _ProfileDetailsBoxState extends State<ProfileDetailsBox> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Modification de votre mot de passe',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: widget.isMobile ? 16 : 18,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF0000A0), // Bleu foncé
                   ),
@@ -649,7 +781,45 @@ class _ProfileDetailsBoxState extends State<ProfileDetailsBox> {
                 const SizedBox(height: 10),
                 _buildField('Confirmer le mot de passe : ', widget.confirmPasswordController, true, isPassword: true),
                 const SizedBox(height: 20),
-                Row(
+                widget.isMobile
+                    ? Column(
+                  // Version mobile : boutons en colonne
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: widget.onSave,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0000A0),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        ),
+                        child: const Text('Enregistrer le profil'),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: widget.onPasswordChange,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0000A0),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        ),
+                        child: const Text('Changer le mot de passe'),
+                      ),
+                    ),
+                  ],
+                )
+                    : Row(
+                  // Version desktop : boutons en ligne
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
@@ -689,7 +859,44 @@ class _ProfileDetailsBoxState extends State<ProfileDetailsBox> {
   // Méthode pour construire un champ (lecture ou édition selon le mode)
   Widget _buildField(String label, TextEditingController controller, bool isEditing, {bool isPassword = false, bool enabled = true}) {
     if (isEditing) {
-      return Row(
+      return widget.isMobile
+          ? Column(
+        // Version mobile : label au-dessus du champ
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0000A0),
+            ),
+          ),
+          const SizedBox(height: 4),
+          TextField(
+            controller: controller,
+            enabled: enabled,
+            obscureText: isPassword,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Color(0xFF0000A0),
+            ),
+            decoration: const InputDecoration(
+              contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              isDense: true,
+              border: OutlineInputBorder(),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0xFF0000A0), width: 1.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0xFF0000A0), width: 2.0),
+              ),
+            ),
+          ),
+        ],
+      )
+          : Row(
+        // Version desktop : label à côté du champ
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
@@ -730,7 +937,31 @@ class _ProfileDetailsBoxState extends State<ProfileDetailsBox> {
         ],
       );
     } else {
-      return RichText(
+      return widget.isMobile
+          ? Column(
+        // Version mobile : affichage en colonne
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0000A0),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            controller.text,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Color(0xFF0000A0),
+            ),
+          ),
+        ],
+      )
+          : RichText(
+        // Version desktop : affichage en ligne
         text: TextSpan(
           children: [
             TextSpan(

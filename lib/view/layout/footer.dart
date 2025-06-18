@@ -8,143 +8,145 @@ class Footer extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
       alignment: Alignment.center,
-      child: Container(
+      child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1200),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            // Si l'écran est trop petit, on passe en colonne
             final isSmall = constraints.maxWidth < 700;
+
             return isSmall
                 ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _footerColumns(isSmall),
-                )
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _logoSection(),
+                const SizedBox(height: 25),
+
+                // Ligne unique pour la 1ère colonne (liens)
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: _footerLinks()
+                        .map((text) => Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: Text(
+                        text,
+                        style: const TextStyle(color: Color(0xFF000091)),
+                      ),
+                    ))
+                        .toList(),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Ligne unique pour la 2ème colonne (réseaux sociaux)
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: _footerSocials()
+                        .map((text) => Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: Text(
+                        text,
+                        style: const TextStyle(color: Color(0xFF000091)),
+                      ),
+                    ))
+                        .toList(),
+                  ),
+                ),
+              ],
+            )
                 : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _footerColumns(isSmall),
-                );
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(flex: 1, child: _logoSection()),
+                const SizedBox(width: 30),
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _footerLinks()
+                        .map((text) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          text,
+                          style: const TextStyle(color: Color(0xFF000091)),
+                        ),
+                      ),
+                    ))
+                        .toList(),
+                  ),
+                ),
+                const SizedBox(width: 30),
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _footerSocials()
+                        .map((text) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          text,
+                          style: const TextStyle(color: Color(0xFF000091)),
+                        ),
+                      ),
+                    ))
+                        .toList(),
+                  ),
+                ),
+              ],
+            );
           },
         ),
       ),
     );
   }
 
-  List<Widget> _footerColumns(bool isSmall) {
+  Widget _logoSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Image.asset('assets/icons/logo.png', height: 50),
+        const SizedBox(height: 15),
+        const Text(
+          'Vous avez le pouvoir de changer.',
+          style: TextStyle(color: Color(0xFF000091)),
+        ),
+        const Text(
+          'Faites un pas de plus vers une vie sereine et épanouie.',
+          style: TextStyle(color: Color(0xFF000091)),
+        ),
+        const SizedBox(height: 15),
+        const Text(
+          '© 2025 (re)sources relationnelles',
+          style: TextStyle(color: Color(0xFF000091)),
+        ),
+      ],
+    );
+  }
+
+  List<String> _footerLinks() {
     return [
-      Flexible(
-        flex: 1,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.asset('assets/icons/logo.png', height: 50),
-            const SizedBox(height: 15.0),
-            const Text(
-              'Vous avez le pouvoir de changer.',
-              style: TextStyle(color: Color(0xFF000091)),
-            ),
-            const Text(
-              'Faites un pas de plus vers une vie sereine et épanouie.',
-              style: TextStyle(color: Color(0xFF000091)),
-            ),
-            const SizedBox(height: 15.0),
-            const Text(
-              '© 2025 (re)sources relationnelles',
-              style: TextStyle(color: Color(0xFF000091)),
-            ),
-          ],
-        ),
-      ),
-      SizedBox(width: isSmall ? 0 : 30, height: isSmall ? 30 : 0),
-      Flexible(
-        flex: 1,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '(re)sources relationnelles',
-              style: TextStyle(
-                color: Color(0xFF000091),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                'Contactez-nous',
-                style: TextStyle(color: Color(0xFF000091)),
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                'Politique de confidentialité',
-                style: TextStyle(color: Color(0xFF000091)),
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                'Mentions légales',
-                style: TextStyle(color: Color(0xFF000091)),
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                'Cookies',
-                style: TextStyle(color: Color(0xFF000091)),
-              ),
-            ),
-          ],
-        ),
-      ),
-      SizedBox(width: isSmall ? 0 : 30, height: isSmall ? 30 : 0),
-      Flexible(
-        flex: 1,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Suivez-nous',
-              style: TextStyle(
-                color: Color(0xFF000091),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                'Instagram',
-                style: TextStyle(color: Color(0xFF000091)),
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                'Facebook',
-                style: TextStyle(color: Color(0xFF000091)),
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                'YouTube',
-                style: TextStyle(color: Color(0xFF000091)),
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                'LinkedIn',
-                style: TextStyle(color: Color(0xFF000091)),
-              ),
-            ),
-          ],
-        ),
-      ),
+      'Contactez-nous',
+      'Politique de confidentialité',
+      'Mentions légales',
+      'Cookies',
+    ];
+  }
+
+  List<String> _footerSocials() {
+    return [
+      'Instagram',
+      'Facebook',
+      'YouTube',
+      'LinkedIn',
     ];
   }
 }
