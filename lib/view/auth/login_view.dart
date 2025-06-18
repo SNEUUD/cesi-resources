@@ -39,13 +39,22 @@ class _LoginPageState extends State<LoginPage> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final utilisateur = data['utilisateur'];
-        final idUtilisateur = utilisateur['id']; // ou _id selon ton API
+        final idUtilisateur = utilisateur['id'];
         final pseudo = utilisateur['pseudo'];
+        final roleId = utilisateur['role']; // <-- ici, on accède bien à 'role'
 
-        // Sauvegarder l'identifiant et le pseudo en session locale
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('idUtilisateur', idUtilisateur);
+        await prefs.setString('idUtilisateur', idUtilisateur.toString());
         await prefs.setString('pseudoUtilisateur', pseudo);
+
+        if (roleId != null) {
+          await prefs.setInt('roleUtilisateur', roleId);
+          print("Rôle stocké : $roleId");
+        } else {
+          await prefs.setInt('roleUtilisateur', 0);
+          print("Rôle null, stocké : 0");
+        }
+
 
         ScaffoldMessenger.of(
           context,

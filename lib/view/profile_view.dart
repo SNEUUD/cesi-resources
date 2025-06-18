@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'layout/header.dart';
 import 'layout/footer.dart';
+import 'resources_user_view.dart';
+
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -367,6 +369,32 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 16),
+Center(
+  child: ElevatedButton.icon(
+    onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ResourcesUserView(),
+        ),
+      );
+    },
+    icon: Icon(Icons.folder, color: Colors.white),
+    label: Text('Mes Ressources'),
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Color(0xFF0000A0),
+      foregroundColor: Colors.white,
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
+    ),
+  ),
+),
+
+
+
                         const SizedBox(height: 20),
                         // Container des détails du profil avec padding horizontal
                         Padding(
