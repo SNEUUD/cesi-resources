@@ -11,11 +11,13 @@ class UsersAdminPage extends StatefulWidget {
 
 class _UsersAdminPageState extends State<UsersAdminPage> {
   late Future<List<dynamic>> futureUsers;
+  late Future<List<dynamic>> futureMaskedResources;
 
   @override
   void initState() {
     super.initState();
     futureUsers = fetchUsers();
+    futureMaskedResources = fetchMaskedResources();
   }
 
   Future<List<dynamic>> fetchUsers() async {
@@ -91,72 +93,271 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
     }
   }
 
+  Future<List<dynamic>> fetchMaskedResources() async {
+    final response = await http.get(
+      Uri.parse('http://localhost:3000/resources_admin'),
+    );
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Erreur lors du chargement des ressources');
+    }
+  }
+
+  Future<void> validateResource(String resourceId) async {
+    final response = await http.patch(
+      Uri.parse('http://localhost:3000/resources_admin/$resourceId/valider'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'statut': 'validé'}),
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        futureMaskedResources = fetchMaskedResources();
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Ressource validée')));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erreur lors de la validation')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gestion des utilisateurs'),
+        title: const Text('Gestion des utilisateurs & ressources masquées'),
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF000091),
         elevation: 1,
       ),
-      body: FutureBuilder<List<dynamic>>(
-        future: futureUsers,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Erreur : ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Aucun utilisateur trouvé.'));
-          } else {
-            final users = snapshot.data!;
-            return ListView.separated(
-              itemCount: users.length,
-              separatorBuilder: (_, __) => const Divider(height: 1),
-              itemBuilder: (context, index) {
-                final user = users[index];
-                return ListTile(
-                  leading: const Icon(Icons.person),
-                  title: Text(user['pseudo'] ?? 'Sans pseudo'),
-                  subtitle: Text(user['email'] ?? ''),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          user['status'] == 'désactivé'
-                              ? Icons.block
-                              : Icons.check_circle,
-                          color:
-                              user['status'] == 'désactivé'
-                                  ? Colors.orange
-                                  : Colors.green,
-                        ),
-                        tooltip:
-                            user['status'] == 'désactivé'
-                                ? 'Réactiver'
-                                : 'Suspendre',
-                        onPressed:
-                            () => updateUserStatus(
-                              user['id'].toString(),
-                              user['status'] == 'désactivé'
-                                  ? 'activé'
-                                  : 'désactivé',
+      body: Row(
+        children: [
+          // Colonne Utilisateurs
+          Expanded(
+            child: FutureBuilder<List<dynamic>>(
+              future: futureUsers,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Erreur : ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('Aucun utilisateur trouvé.'));
+                } else {
+                  final users = snapshot.data!;
+                  return ListView.separated(
+                    itemCount: users.length,
+                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    itemBuilder: (context, index) {
+                      final user = users[index];
+                      return ListTile(
+                        leading: const Icon(Icons.person),
+                        title: Text(user['pseudo'] ?? 'Sans pseudo'),
+                        subtitle: Text(user['email'] ?? ''),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                user['status'] == 'désactivé'
+                                    ? Icons.block
+                                    : Icons.check_circle,
+                                color:
+                                    user['status'] == 'désactivé'
+                                        ? Colors.orange
+                                        : Colors.green,
+                              ),
+                              tooltip:
+                                  user['status'] == 'désactivé'
+                                      ? 'Réactiver'
+                                      : 'Suspendre',
+                              onPressed:
+                                  () => updateUserStatus(
+                                    user['id'].toString(),
+                                    user['status'] == 'désactivé'
+                                        ? 'activé'
+                                        : 'désactivé',
+                                  ),
                             ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        tooltip: 'Supprimer',
-                        onPressed: () => deleteUser(user['id'].toString()),
-                      ),
-                    ],
-                  ),
-                );
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              tooltip: 'Supprimer',
+                              onPressed:
+                                  () => deleteUser(user['id'].toString()),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                }
               },
-            );
-          }
-        },
+            ),
+          ),
+          const VerticalDivider(width: 1),
+          // Colonne Ressources masquées
+          Expanded(
+            child: FutureBuilder<List<dynamic>>(
+              future: futureMaskedResources,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Erreur : ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('Aucune ressource masquée.'));
+                } else {
+                  final resources = snapshot.data!;
+                  return ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: resources.length,
+                    itemBuilder: (context, index) {
+                      final res = resources[index];
+
+                      Widget imageWidget;
+                      if (res['image'] != null && res['image'].isNotEmpty) {
+                        try {
+                          imageWidget = Image.memory(
+                            base64Decode(res['image']),
+                            width: double.infinity,
+                            height: 180,
+                            fit: BoxFit.cover,
+                          );
+                        } catch (_) {
+                          imageWidget = Container(
+                            height: 180,
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.broken_image, size: 80),
+                          );
+                        }
+                      } else {
+                        imageWidget = Container(
+                          height: 180,
+                          color: Colors.grey[300],
+                          child: const Icon(
+                            Icons.image_not_supported,
+                            size: 80,
+                          ),
+                        );
+                      }
+
+                      return Center(
+                        child: SizedBox(
+                          width: 400,
+                          child: Card(
+                            margin: const EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 8,
+                            ),
+                            elevation: 2,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(18),
+                                  ),
+                                  child: imageWidget,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        res['title'] ?? 'Sans titre',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: Color(0xFF000091),
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        res['message'] ?? '',
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black87,
+                                        ),
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.calendar_today,
+                                            size: 18,
+                                            color: Colors.grey,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            res['date'] != null
+                                                ? res['date']
+                                                    .toString()
+                                                    .split('T')
+                                                    .first
+                                                : '',
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          ElevatedButton.icon(
+                                            icon: const Icon(
+                                              Icons.check_circle,
+                                              color: Colors.white,
+                                            ),
+                                            label: const Text('Valider'),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.green,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                            onPressed:
+                                                () => validateResource(
+                                                  res['idRessource'].toString(),
+                                                ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
