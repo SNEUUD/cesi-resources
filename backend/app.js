@@ -13,7 +13,9 @@ const { db, dbTest } = require("./db");
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(express.json({ limit: '10mb' }));
+
 
 const getDB = (req) => (req.path.startsWith("/test") ? dbTest : db);
 
@@ -384,34 +386,35 @@ app.get("/ressources/user/:idUtilisateur", (req, res) => {
 
 // --- RESSOURCES TOUTES CATEGORIES ---
 app.get("/ressourcesAll", (req, res) => {
-
   const sql = `
-    SELECT r.idRessource, r.titreRessource AS titre, r.messageRessource AS description,
-           r.dateRessource, r.statusRessource, r.imageRessource, c.nomCatégorie AS nomCategorie
+    SELECT r.idRessource, r.titreRessource, r.messageRessource, r.dateRessource,
+           r.statusRessource, r.imageRessource,
+           r.Catégories_idCatégorie, c.nomCatégorie,
+           r.Utilisateurs_idUtilisateur, u.pseudoUtilisateur
     FROM Ressources r
+    JOIN Utilisateurs u ON r.Utilisateurs_idUtilisateur = u.idUtilisateur
     JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
-    WHERE r.statusRessource = 'affiche'
-
     ORDER BY r.dateRessource DESC
   `;
 
-  const conn = getDB(req);
-  conn.query(sql, (err, results) => {
+  db.query(sql, (err, results) => {
     if (err) {
-      console.error("Erreur lors de la récupération des ressources :", err);
+      console.error("Erreur récupération ressources:", err);
       return res.status(500).json({ error: "Erreur serveur" });
     }
 
-    const ressources = results.map((ressource) => ({
-      ...ressource,
-      imageRessource: ressource.imageRessource
-        ? Buffer.from(ressource.imageRessource).toString("base64")
-        : null,
-    }));
+    results.forEach(r => {
+      if (r.imageRessource) {
+        r.imageRessource = Buffer.from(r.imageRessource).toString('base64');
+      }
+    });
 
-    res.json(ressources);
+    res.status(200).json(results);
   });
 });
+
+
+
 
 // --- GESTION DES UTILISATEURS (ADMIN) ---
 app.get(["/utilisateurs", "/test/utilisateurs"], (req, res) => {
@@ -522,7 +525,7 @@ app.put("/ressources/:idRessource", (req, res) => {
     }
 
     const idCat = results[0].idCatégorie;
-    const imageBuffer = image ? Buffer.from(image, "base64") : null;
+const imageBuffer = image ? Buffer.from(image, "base64") : null;
 
     const sqlUpdate = `
       UPDATE Ressources
@@ -599,6 +602,368 @@ app.delete(
     );
   }
 );
+
+// --- Récupération des likes d'une ressource + si utilisateur a liké ---
+app.get("/ressources/:id/likes/:userId", (req, res) => {
+  const { id, userId } = req.params;
+
+  const countSql = `
+    SELECT COUNT(*) AS likeCount FROM Interactions
+    WHERE Ressources_idRessource = ? AND typeInteraction = 'favori'
+  `;
+
+  const userSql = `
+    SELECT * FROM Interactions
+    WHERE Ressources_idRessource = ? AND Utilisateurs_idUtilisateur = ? AND typeInteraction = 'favori'
+  `;
+
+  db.query(countSql, [id], (err, countResults) => {
+    if (err) return res.status(500).json({ error: "Erreur serveur" });
+
+    db.query(userSql, [id, userId], (err2, userResults) => {
+      if (err2) return res.status(500).json({ error: "Erreur serveur" });
+
+      res.json({
+        likeCount: countResults[0].likeCount,
+        liked: userResults.length > 0,
+      });
+    });
+  });
+});
+
+// --- Ajout ou suppression de like ---
+app.post("/interactions", (req, res) => {
+  const { userId, ressourceId } = req.body;
+
+  const checkSql = `
+    SELECT * FROM Interactions
+    WHERE Utilisateurs_idUtilisateur = ? AND Ressources_idRessource = ? AND typeInteraction = 'favori'
+  `;
+
+  db.query(checkSql, [userId, ressourceId], (err, results) => {
+    if (err) return res.status(500).json({ error: "Erreur serveur" });
+
+    if (results.length > 0) {
+      const deleteSql = `
+        DELETE FROM Interactions
+        WHERE Utilisateurs_idUtilisateur = ? AND Ressources_idRessource = ? AND typeInteraction = 'favori'
+      `;
+      db.query(deleteSql, [userId, ressourceId], (err) => {
+        if (err) return res.status(500).json({ error: "Erreur suppression" });
+        res.json({ liked: false });
+      });
+    } else {
+      const insertSql = `
+        INSERT INTO Interactions (Utilisateurs_idUtilisateur, Ressources_idRessource, typeInteraction, dateInteraction)
+        VALUES (?, ?, 'favori', NOW())
+      `;
+      db.query(insertSql, [userId, ressourceId], (err) => {
+        if (err) return res.status(500).json({ error: "Erreur ajout" });
+        res.json({ liked: true });
+      });
+    }
+  });
+});
+
+// --- Ajouter un commentaire ---
+app.post("/ressources/:id/commentaire", (req, res) => {
+  const { id } = req.params;
+  const { userId, message } = req.body;
+
+  if (!userId || !message) {
+    return res.status(400).json({ error: "Champs manquants" });
+  }
+
+  const sql = `
+    INSERT INTO Commentaires (messageCommentaire, dateCommentaire, Utilisateurs_idUtilisateur, Ressources_idRessource)
+    VALUES (?, NOW(), ?, ?)
+  `;
+
+  db.query(sql, [message, userId, id], (err) => {
+    if (err) {
+      console.error("Erreur ajout commentaire :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+
+    res.status(201).json({ message: "Commentaire ajouté" });
+  });
+});
+
+// --- Récupérer les commentaires d'une ressource ---
+app.get("/ressources/:id/commentaires", (req, res) => {
+  const { id } = req.params;
+
+  const sql = `
+    SELECT c.messageCommentaire, c.dateCommentaire, u.pseudoUtilisateur AS pseudo
+    FROM Commentaires c
+    JOIN Utilisateurs u ON c.Utilisateurs_idUtilisateur = u.idUtilisateur
+    WHERE c.Ressources_idRessource = ?
+    ORDER BY c.dateCommentaire DESC
+  `;
+
+  db.query(sql, [id], (err, results) => {
+    if (err) {
+      console.error("Erreur récupération commentaires :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+
+    res.status(200).json(results);
+  });
+});
+
+// --- AJOUTER UNE RÉPONSE À UN COMMENTAIRE ---
+app.post("/commentaires/:idCommentaire/reponse", (req, res) => {
+  const { idCommentaire } = req.params;
+  const { userId, message } = req.body;
+
+  if (!userId || !message) {
+    return res.status(400).json({ error: "Champs manquants" });
+  }
+
+  // D'abord, vérifier que le commentaire parent existe
+  const checkCommentSql = `
+    SELECT Ressources_idRessource FROM Commentaires WHERE idCommentaire = ?
+  `;
+
+  db.query(checkCommentSql, [idCommentaire], (err, results) => {
+    if (err) {
+      console.error("Erreur vérification commentaire :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Commentaire parent non trouvé" });
+    }
+
+    const ressourceId = results[0].Ressources_idRessource;
+
+    const sql = `
+      INSERT INTO Commentaires (messageCommentaire, dateCommentaire, Utilisateurs_idUtilisateur, Ressources_idRessource, commentaire_parent_id)
+      VALUES (?, NOW(), ?, ?, ?)
+    `;
+
+    db.query(sql, [message, userId, ressourceId, idCommentaire], (err) => {
+      if (err) {
+        console.error("Erreur ajout réponse :", err);
+        return res.status(500).json({ error: "Erreur serveur" });
+      }
+
+      res.status(201).json({ message: "Réponse ajoutée" });
+    });
+  });
+});
+
+// --- RÉCUPÉRER LES COMMENTAIRES AVEC RÉPONSES D'UNE RESSOURCE ---
+app.get("/ressources/:id/commentaires", (req, res) => {
+  const { id } = req.params;
+
+  const sql = `
+    SELECT 
+      c.idCommentaire,
+      c.messageCommentaire, 
+      c.dateCommentaire, 
+      c.commentaire_parent_id,
+      u.pseudoUtilisateur AS pseudo
+    FROM Commentaires c
+    JOIN Utilisateurs u ON c.Utilisateurs_idUtilisateur = u.idUtilisateur
+    WHERE c.Ressources_idRessource = ?
+    ORDER BY 
+      CASE WHEN c.commentaire_parent_id IS NULL THEN c.idCommentaire ELSE c.commentaire_parent_id END,
+      c.commentaire_parent_id IS NULL DESC,
+      c.dateCommentaire ASC
+  `;
+
+  db.query(sql, [id], (err, results) => {
+    if (err) {
+      console.error("Erreur récupération commentaires :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+
+    // Organiser les commentaires avec leurs réponses
+    const commentaires = [];
+    const commentairesMap = {};
+
+    results.forEach(comment => {
+      if (!comment.commentaire_parent_id) {
+        // C'est un commentaire principal
+        comment.reponses = [];
+        commentaires.push(comment);
+        commentairesMap[comment.idCommentaire] = comment;
+      } else {
+        // C'est une réponse
+        if (commentairesMap[comment.commentaire_parent_id]) {
+          commentairesMap[comment.commentaire_parent_id].reponses.push(comment);
+        }
+      }
+    });
+
+    res.status(200).json(commentaires);
+  });
+});
+
+// --- RÉCUPÉRER LES RESSOURCES LIKÉES PAR UN UTILISATEUR ---
+app.get("/utilisateur/:userId/likes", (req, res) => {
+  const { userId } = req.params;
+
+  const sql = `
+    SELECT 
+      r.idRessource,
+      r.titreRessource,
+      r.messageRessource,
+      r.dateRessource,
+      r.imageRessource,
+      c.nomCatégorie,
+      u.pseudoUtilisateur,
+      i.dateInteraction
+    FROM Interactions i
+    JOIN Ressources r ON i.Ressources_idRessource = r.idRessource
+    JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
+    JOIN Utilisateurs u ON r.Utilisateurs_idUtilisateur = u.idUtilisateur
+    WHERE i.Utilisateurs_idUtilisateur = ? 
+      AND i.typeInteraction = 'favori'
+      AND r.statusRessource = 'affiche'
+    ORDER BY i.dateInteraction DESC
+  `;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error("Erreur récupération likes utilisateur :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+
+    const ressources = results.map((ressource) => ({
+      ...ressource,
+      imageRessource: ressource.imageRessource
+        ? Buffer.from(ressource.imageRessource).toString("base64")
+        : null,
+    }));
+
+    res.status(200).json(ressources);
+  });
+});
+
+// --- SUPPRIMER UNE RÉPONSE ---
+app.delete("/commentaires/:idCommentaire", (req, res) => {
+  const { idCommentaire } = req.params;
+  const { userId } = req.body;
+
+  // Vérifier que l'utilisateur est le propriétaire du commentaire
+  const checkSql = `
+    SELECT Utilisateurs_idUtilisateur FROM Commentaires WHERE idCommentaire = ?
+  `;
+
+  db.query(checkSql, [idCommentaire], (err, results) => {
+    if (err) {
+      console.error("Erreur vérification propriétaire :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Commentaire non trouvé" });
+    }
+
+    if (results[0].Utilisateurs_idUtilisateur !== userId) {
+      return res.status(403).json({ error: "Non autorisé" });
+    }
+
+    // Supprimer d'abord les réponses si c'est un commentaire parent
+    const deleteRepliesSql = `
+      DELETE FROM Commentaires WHERE commentaire_parent_id = ?
+    `;
+
+    db.query(deleteRepliesSql, [idCommentaire], (err) => {
+      if (err) {
+        console.error("Erreur suppression réponses :", err);
+        return res.status(500).json({ error: "Erreur serveur" });
+      }
+
+      // Puis supprimer le commentaire principal
+      const deleteCommentSql = `
+        DELETE FROM Commentaires WHERE idCommentaire = ?
+      `;
+
+      db.query(deleteCommentSql, [idCommentaire], (err) => {
+        if (err) {
+          console.error("Erreur suppression commentaire :", err);
+          return res.status(500).json({ error: "Erreur serveur" });
+        }
+
+        res.status(200).json({ message: "Commentaire supprimé" });
+      });
+    });
+  });
+});
+
+// --- PROFIL UTILISATEUR + LIKES ---
+app.get("/profil/:idUtilisateur", (req, res) => {
+  const { idUtilisateur } = req.params;
+
+  const utilisateurSql = `
+    SELECT nomUtilisateur as nom, 
+           prénomUtilisateur as prénom, 
+           dateNaissanceUtilisateur as dateNaissance,
+           sexeUtilisateur as sexe, 
+           pseudoUtilisateur as pseudo, 
+           emailUtilisateur as email, 
+           Roles_idRole as role
+    FROM Utilisateurs 
+    WHERE idUtilisateur = ?
+  `;
+
+  const likesSql = `
+    SELECT 
+      r.idRessource,
+      r.titreRessource,
+      r.messageRessource,
+      r.dateRessource,
+      r.imageRessource,
+      c.nomCatégorie,
+      u.pseudoUtilisateur,
+      i.dateInteraction
+    FROM Interactions i
+    JOIN Ressources r ON i.Ressources_idRessource = r.idRessource
+    JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
+    JOIN Utilisateurs u ON r.Utilisateurs_idUtilisateur = u.idUtilisateur
+    WHERE i.Utilisateurs_idUtilisateur = ? 
+      AND i.typeInteraction = 'favori'
+      AND r.statusRessource = 'affiche'
+    ORDER BY i.dateInteraction DESC
+  `;
+
+  db.query(utilisateurSql, [idUtilisateur], (err, results) => {
+    if (err) {
+      console.error("Erreur lors de la récupération du profil :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+
+    const utilisateur = results[0];
+    if (utilisateur.dateNaissance) {
+      const date = new Date(utilisateur.dateNaissance);
+      utilisateur.dateNaissance = date.toLocaleDateString("fr-FR");
+    }
+
+    db.query(likesSql, [idUtilisateur], (err2, likes) => {
+      if (err2) {
+        console.error("Erreur récupération des likes :", err2);
+        return res.status(500).json({ error: "Erreur serveur" });
+      }
+
+      const ressources = likes.map((ressource) => ({
+        ...ressource,
+        imageRessource: ressource.imageRessource
+          ? Buffer.from(ressource.imageRessource).toString("base64")
+          : null,
+      }));
+
+      res.status(200).json({ utilisateur, likes: ressources });
+    });
+  });
+});
+
 
 // --- LANCEMENT DU SERVEUR ---
 app.listen(3000, () => {
