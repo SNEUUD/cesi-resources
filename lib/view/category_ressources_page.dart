@@ -28,7 +28,6 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
   static const Color rougeMarianne = Color(0xFFE1000F);
   static const Color grisFrance = Color(0xFF666666);
   static const Color grisClair = Color(0xFFF6F6F6);
-  static const Color vertSuccess = Color(0xFF00A95F);
   static const Color bleuCumulus = Color(0xFFE5E5F4);
 
   @override
