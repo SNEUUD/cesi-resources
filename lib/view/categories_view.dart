@@ -76,6 +76,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
     try {
       final response = await http.get(
         Uri.parse('http://chris-crp.freeboxos.fr:3000/categories'),
+
       );
 
       if (response.statusCode == 200) {
