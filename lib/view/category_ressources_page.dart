@@ -128,9 +128,11 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
         );
       } else if (sortBy == 'titre') {
         ressources.sort(
-          (a, b) => (a['titreRessource'] ?? '').toString().toLowerCase().compareTo(
-            (b['titreRessource'] ?? '').toString().toLowerCase(),
-          ),
+
+          (a, b) => (a['titreRessource'] ?? '')
+              .toString()
+              .toLowerCase()
+              .compareTo((b['titreRessource'] ?? '').toString().toLowerCase()),
         );
       }
       return ressources;
@@ -153,6 +155,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
     return ressources.where((ressource) {
       final titre = (ressource['titreRessource'] ?? '').toString().toLowerCase();
       final description = (ressource['messageRessource'] ?? '').toString().toLowerCase();
+
       return titre.contains(searchQuery) || description.contains(searchQuery);
     }).toList();
   }
@@ -174,6 +177,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
               child: Text(
                 'Ressources : ${widget.nomCategorie}',
                 style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -386,7 +390,9 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                     itemBuilder: (context, index) {
                       final ressource = ressources[index];
                       final ressourceId = ressource['idRessource'];
-                      final auteur = ressource['pseudoUtilisateur'] ?? 'Auteur inconnu';
+
+                      final auteur =
+                          ressource['pseudoUtilisateur'] ?? 'Auteur inconnu';
 
                       if (!likedStatus.containsKey(ressourceId)) {
                         fetchLikesForResource(ressourceId);
@@ -456,6 +462,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                         decoration: BoxDecoration(
                                           color: bleuCumulus,
                                           borderRadius: BorderRadius.circular(4),
+
                                         ),
                                         child: Text(
                                           widget.nomCategorie,
@@ -471,6 +478,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                       // Titre
                                       Text(
                                         ressource['titreRessource'] ?? 'Sans titre',
+
                                         style: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 20,
@@ -496,7 +504,9 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                               color: grisFrance,
                                             ),
                                           ),
-                                          if (ressource['dateRessource'] != null) ...[
+
+                                          if (ressource['dateRessource'] !=
+                                              null) ...[
                                             const SizedBox(width: 16),
                                             Icon(
                                               Icons.access_time,
@@ -505,7 +515,10 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                             ),
                                             const SizedBox(width: 4),
                                             Text(
-                                              formatDateTime(ressource['dateRessource']),
+
+                                              formatDateTime(
+                                                ressource['dateRessource'],
+                                              ),
                                               style: TextStyle(
                                                 fontSize: 13,
                                                 color: grisFrance,
@@ -561,6 +574,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                                             ? rougeMarianne
                                                             : grisFrance,
                                                         fontWeight: FontWeight.w500,
+
                                                       ),
                                                     ),
                                                   ],
@@ -603,6 +617,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                             hintText: "Écrire un commentaire...",
                                             hintStyle: TextStyle(
                                               color: grisFrance.withOpacity(0.7),
+
                                             ),
                                             suffixIcon: IconButton(
                                               icon: const Icon(
@@ -614,22 +629,32 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                                 try {
                                                   await sendCommentaire(
                                                     ressourceId,
-                                                    commentControllers[ressourceId]!.text,
+
+                                                    commentControllers[ressourceId]!
+                                                        .text,
                                                   );
-                                                  commentControllers[ressourceId]!.clear();
+                                                  commentControllers[ressourceId]!
+                                                      .clear();
                                                   setState(() {});
                                                 } catch (e) {
-                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                  ScaffoldMessenger.of(
+                                                    context,
+                                                  ).showSnackBar(
                                                     SnackBar(
-                                                      content: Text('Erreur : $e'),
-                                                      backgroundColor: rougeMarianne,
+                                                      content: Text(
+                                                        'Erreur : $e',
+                                                      ),
+                                                      backgroundColor:
+                                                          rougeMarianne,
                                                     ),
                                                   );
                                                 }
                                               },
                                             ),
                                             border: InputBorder.none,
-                                            contentPadding: const EdgeInsets.all(12),
+
+                                            contentPadding:
+                                                const EdgeInsets.all(12),
                                           ),
                                         ),
                                       ),
@@ -654,6 +679,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                                 ),
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
+
                                                   children: [
                                                     Row(
                                                       children: [
@@ -675,6 +701,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                                         Text(
                                                           c['dateCommentaire'] != null
                                                               ? formatDateTime(c['dateCommentaire'])
+
                                                               : '',
                                                           style: TextStyle(
                                                             fontSize: 11,
@@ -709,6 +736,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                             label: Text(
                                               "Afficher les ${commentSnapshot.data!.length - 3} commentaires restants",
                                               style: const TextStyle(fontSize: 13),
+
                                             ),
                                             style: TextButton.styleFrom(
                                               foregroundColor: bleuFrance,

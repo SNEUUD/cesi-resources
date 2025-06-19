@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _fetchCategories() async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:3000/categories'),
+        Uri.parse('http://0.0.0.0:3000/categories'),
       );
       if (response.statusCode == 200) {
         setState(() {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'layout/header.dart';
+import '../main.dart';
 import 'category_ressources_page.dart';
 
 class Category {
@@ -61,21 +61,19 @@ class _CategoriesPageState extends State<CategoriesPage> {
       });
     } else {
       setState(() {
-        filteredCategories =
-            allCategories
-                .where(
-                  (category) => category.nomCategorie.toLowerCase().contains(
-                    query.toLowerCase(),
-                  ),
-                )
-                .toList();
+        filteredCategories = allCategories
+            .where(
+              (category) => category.nomCategorie.toLowerCase().contains(
+            query.toLowerCase(),
+          ),
+        )
+            .toList();
       });
     }
   }
 
   Future<List<Category>> fetchCategories() async {
     try {
-      // Remplacez l'URL par celle de votre API
       final response = await http.get(
         Uri.parse('http://localhost:3000/categories'),
       );
@@ -93,7 +91,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
     }
   }
 
-  // Couleurs pour différentes catégories
   Color getCategoryColor(int index) {
     final colors = [
       Colors.blue,
@@ -106,7 +103,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
     return colors[index % colors.length];
   }
 
-  // Couleurs d'arrière-plan pour différentes catégories
   Color getCategoryBgColor(int index) {
     final colors = [
       Colors.blue.shade50,
@@ -121,15 +117,44 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+
     return Scaffold(
-      appBar: const Header(),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Titre de la page
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (_) => const HomePage()),
+                            (route) => false,
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Color(0xFF0000CC),
+                      size: 24,
+                    ),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Retour',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF0000CC),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
               const Text(
                 'Catégories',
                 style: TextStyle(
@@ -139,13 +164,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 ),
               ),
               const SizedBox(height: 8),
-              // Description
               const Text(
-                'Parcourez l’ensemble des catégories disponibles pour explorer les thématiques proposées. Chaque catégorie regroupe des ressources spécifiques pour vous aider à mieux comprendre un sujet ou approfondir vos connaissances. Utilisez la barre de recherche pour filtrer rapidement selon vos centres d’intérêt.',
+                "Parcourez l\'ensemble des catégories disponibles pour explorer les thématiques proposées. Chaque catégorie regroupe des ressources spécifiques pour vous aider à mieux comprendre un sujet ou approfondir vos connaissances. Utilisez la barre de recherche pour filtrer rapidement selon vos centres d'intérêt.",
                 style: TextStyle(fontSize: 12, color: Colors.black54),
               ),
               const SizedBox(height: 16),
-              // Champ de recherche
               Row(
                 children: [
                   const Text(
@@ -172,7 +195,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 ],
               ),
               const SizedBox(height: 10),
-              // Grille de catégories
               Expanded(
                 child: FutureBuilder<List<Category>>(
                   future: futureCategories,
@@ -181,28 +203,25 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Erreur: ${snapshot.error}'));
-                    } else if (!snapshot.hasData ||
-                        filteredCategories.isEmpty) {
+                    } else if (!snapshot.hasData || filteredCategories.isEmpty) {
                       return const Center(
                         child: Text('Aucune catégorie trouvée'),
                       );
                     } else {
-                      List<Category> categoriesToDisplay =
-                          showAllCategories
-                              ? filteredCategories
-                              : filteredCategories.take(6).toList();
+                      List<Category> categoriesToDisplay = showAllCategories
+                          ? filteredCategories
+                          : filteredCategories.take(6).toList();
 
                       return GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              mainAxisSpacing: 16,
-                              crossAxisSpacing: 16,
-                              childAspectRatio: 2,
-                            ),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: isMobile ? 1 : 3,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: 2.5,
+                        ),
                         itemCount: categoriesToDisplay.length,
                         itemBuilder: (context, index) {
-                          Category category = categoriesToDisplay[index];
+                          final category = categoriesToDisplay[index];
                           return _buildCategoryCard(
                             category.nomCategorie,
                             category.description,
@@ -215,8 +234,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   },
                 ),
               ),
-
-              // Bouton Voir plus
               if (filteredCategories.length > 6)
                 Center(
                   child: ElevatedButton(
@@ -249,11 +266,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
   }
 
   Widget _buildCategoryCard(
-    String title,
-    String description,
-    Color bgColor,
-    Color buttonColor,
-  ) {
+      String title,
+      String description,
+      Color bgColor,
+      Color buttonColor,
+      ) {
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -272,57 +289,60 @@ class _CategoriesPageState extends State<CategoriesPage> {
         color: bgColor,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF0000CC),
+          child: IntrinsicHeight(  // Permet d'ajuster la hauteur au contenu
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0000CC),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                description,
-                style: const TextStyle(fontSize: 12, color: Colors.black54),
-                maxLines: 4,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const Spacer(),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) =>
-                                CategoryResourcesPage(nomCategorie: title),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: Text(
+                    description,
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              CategoryResourcesPage(nomCategorie: title),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0000CC),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF0000CC),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
+                      minimumSize: const Size(100, 30),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
-                    minimumSize: const Size(100, 30),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                    child: const Text(
+                      'Voir les ressources liées',
+                      style: TextStyle(fontSize: 10),
                     ),
-                  ),
-                  child: const Text(
-                    'Voir les ressources liées',
-                    style: TextStyle(fontSize: 10),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
