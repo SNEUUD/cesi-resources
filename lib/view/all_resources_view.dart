@@ -53,11 +53,8 @@ class _AllResourcesViewState extends State<AllResourcesView> {
   Future<List<Map<String, dynamic>>> fetchCommentaires(int ressourceId) async {
     try {
       final response = await http.get(
-<<<<<<< HEAD
         Uri.parse('http://chris-crp.freeboxos.fr:3000/ressources/$ressourceId/commentaires'),
-=======
-        Uri.parse('http://10.173.128.242:3000/ressources/$ressourceId/commentaires'),
->>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
+  
       );
 
       if (response.statusCode == 200) {
@@ -85,11 +82,8 @@ class _AllResourcesViewState extends State<AllResourcesView> {
 
     try {
       final response = await http.post(
-<<<<<<< HEAD
         Uri.parse('http://chris-crp.freeboxos.fr:3000/ressources/$ressourceId/commentaire'),
-=======
-        Uri.parse('http://10.173.128.242:3000/ressources/$ressourceId/commentaire'),
->>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
+
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'userId': userId, 'message': message.trim()}),
       );
@@ -111,11 +105,8 @@ class _AllResourcesViewState extends State<AllResourcesView> {
 
     try {
       final response = await http.get(
-<<<<<<< HEAD
         Uri.parse('http://chris-crp.freeboxos.fr:3000/ressources/$ressourceId/likes/$userId'),
-=======
-        Uri.parse('http://10.173.128.242:3000/ressources/$ressourceId/likes/$userId'),
->>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
+
       );
 
       if (response.statusCode == 200) {
@@ -139,11 +130,8 @@ class _AllResourcesViewState extends State<AllResourcesView> {
 
     try {
       final response = await http.post(
-<<<<<<< HEAD
         Uri.parse('http://chris-crp.freeboxos.fr:3000/interactions'),
-=======
-        Uri.parse('http://10.173.128.242:3000/interactions'),
->>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
+
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'userId': userId, 'ressourceId': ressourceId}),
       );
@@ -159,11 +147,8 @@ class _AllResourcesViewState extends State<AllResourcesView> {
   Future<List<dynamic>> fetchAllResources() async {
     try {
       final response = await http.get(
-<<<<<<< HEAD
         Uri.parse('http://chris-crp.freeboxos.fr:3000/ressourcesAll'),
-=======
-        Uri.parse('http://10.173.128.242:3000/ressourcesAll'),
->>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
+
       );
 
       if (response.statusCode == 200) {

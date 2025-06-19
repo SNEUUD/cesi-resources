@@ -54,11 +54,8 @@ class _ResourcesUserViewState extends State<ResourcesUserView>
 
     try {
       final response = await http.get(
-<<<<<<< HEAD
         Uri.parse('http://chris-crp.freeboxos.fr:3000/ressources/user/$userId'),
-=======
-        Uri.parse('http://10.173.128.242:3000/ressources/user/$userId'),
->>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
+
       );
 
       if (response.statusCode == 200) {
@@ -96,11 +93,8 @@ class _ResourcesUserViewState extends State<ResourcesUserView>
     if (confirm == true) {
       try {
         final response = await http.delete(
-<<<<<<< HEAD
           Uri.parse('http://chris-crp.freeboxos.fr:3000/ressources/$idRessource'),
-=======
-          Uri.parse('http://10.173.128.242:3000/ressources/$idRessource'),
->>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
+
         );
 
         if (response.statusCode == 200) {
@@ -181,11 +175,8 @@ class _ResourcesUserViewState extends State<ResourcesUserView>
       builder: (ctx) {
         fetchCategories() async {
           final response = await http.get(
-<<<<<<< HEAD
             Uri.parse('http://chris-crp.freeboxos.fr:3000/categories'),
-=======
-            Uri.parse('http://10.173.128.242:3000/categories'),
->>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
+
           );
           if (response.statusCode == 200) {
             final List<dynamic> data = jsonDecode(response.body);
@@ -501,11 +492,8 @@ class _ResourcesUserViewState extends State<ResourcesUserView>
   ) async {
     try {
       final response = await http.put(
-<<<<<<< HEAD
         Uri.parse('http://chris-crp.freeboxos.fr:3000/ressources/${r['idRessource']}'),
-=======
-        Uri.parse('http://10.173.128.242:3000/ressources/${r['idRessource']}'),
->>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
+
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'titre': titre,

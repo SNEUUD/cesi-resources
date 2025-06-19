@@ -218,11 +218,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
     try {
       final response = await http.put(
-<<<<<<< HEAD
         Uri.parse('http://chris-crp.freeboxos.fr:3000/profil/$userId/password'),
-=======
-        Uri.parse('http://10.173.128.242/profil/$userId/password'),
->>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
+
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
