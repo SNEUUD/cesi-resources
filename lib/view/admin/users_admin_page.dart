@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../layout/header.dart';
+
 class UsersAdminPage extends StatefulWidget {
   const UsersAdminPage({super.key});
 
@@ -697,126 +699,120 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Administration',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF000091),
-        elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            height: 1,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.transparent,
-                  const Color(0xFF000091).withOpacity(0.3),
-                  Colors.transparent,
+      backgroundColor: const Color(0xFFF8FAFC),
+      body: Column(
+        children: [
+          Header(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                bottom: BorderSide(
+                  color: Color(0x4D000091), // Couleur bleue avec opacité
+                  width: 1,
+                ),
+              ),
+            ),
+            child: const Text(
+              'Administration',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Color(0xFF000091),
+              ),
+            ),
+          ),
+
+          // 🔹 Contenu principal
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Colonne Utilisateurs
+                  Expanded(
+                    child: Column(
+                      children: [
+                        _buildSectionHeader("Utilisateurs"),
+                        const SizedBox(height: 20),
+                        Expanded(
+                          child: FutureBuilder<List<dynamic>>(
+                            future: futureUsers,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const Center(child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Center(child: Text('Erreur: ${snapshot.error}'));
+                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                return const Center(child: Text('Aucun utilisateur trouvé.'));
+                              } else {
+                                final users = snapshot.data!;
+                                return ListView.builder(
+                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                  itemCount: users.length,
+                                  itemBuilder: (context, index) {
+                                    return _buildUserCard(users[index]);
+                                  },
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(width: 32),
+
+                  // Colonne Ressources
+                  Expanded(
+                    child: Column(
+                      children: [
+                        _buildSectionHeader(
+                          "Ressources à valider",
+                          action: ElevatedButton.icon(
+                            icon: const Icon(Icons.add_circle, color: Colors.white),
+                            label: const Text('Créer une ressource'),
+                            onPressed: () {
+                              // Naviguer vers la création
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Expanded(
+                          child: FutureBuilder<List<dynamic>>(
+                            future: futureMaskedResources,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const Center(child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Center(child: Text('Erreur: ${snapshot.error}'));
+                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                return const Center(child: Text('Aucune ressource à valider.'));
+                              } else {
+                                final resources = snapshot.data!;
+                                return ListView.builder(
+                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                  itemCount: resources.length,
+                                  itemBuilder: (context, index) {
+                                    return _buildResourceCard(resources[index]);
+                                  },
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
-        ),
-      ),
-      backgroundColor: const Color(0xFFF8FAFC),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  _buildSectionHeader("Utilisateurs"),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    child: FutureBuilder<List<dynamic>>(
-                      future: futureUsers,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text('Erreur: ${snapshot.error}'),
-                          );
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return const Center(
-                            child: Text('Aucun utilisateur trouvé.'),
-                          );
-                        } else {
-                          final users = snapshot.data!;
-                          return ListView.builder(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            itemCount: users.length,
-                            itemBuilder: (context, index) {
-                              return _buildUserCard(users[index]);
-                            },
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 32),
-            Expanded(
-              child: Column(
-                children: [
-                  _buildSectionHeader(
-                    "Ressources à valider",
-                    action: ElevatedButton.icon(
-                      icon: const Icon(Icons.add_circle, color: Colors.white),
-                      label: const Text('Créer une ressource'),
-                      onPressed: () {
-                        // Navigate to create resource page
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    child: FutureBuilder<List<dynamic>>(
-                      future: futureMaskedResources,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text('Erreur: ${snapshot.error}'),
-                          );
-                        } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
-                          return const Center(
-                            child: Text('Aucune ressource à valider.'),
-                          );
-                        } else {
-                          final resources = snapshot.data!;
-                          return ListView.builder(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            itemCount: resources.length,
-                            itemBuilder: (context, index) {
-                              return _buildResourceCard(resources[index]);
-                            },
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
