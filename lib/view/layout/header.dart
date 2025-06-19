@@ -252,9 +252,15 @@ class _HeaderState extends State<Header> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             ),
-            onPressed: _logout,
+            onPressed: () async {
+              await _logout();
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const HomePage()),
+                    (route) => false,
+              );
+            },
             child: const Text('Déconnexion', style: TextStyle(color: Colors.white)),
-          ),
+          )
         ],
       );
     }
