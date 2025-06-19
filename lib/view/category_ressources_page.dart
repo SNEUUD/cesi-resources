@@ -31,7 +31,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
   Future<List<dynamic>> fetchResources() async {
     final response = await http.get(
       Uri.parse(
-        'http://10.173.128.242:3000/ressources?categorie=${widget.nomCategorie}',
+        'http://localhost:3000/ressources?categorie=${widget.nomCategorie}',
       ),
     );
     if (response.statusCode == 200) {

@@ -38,7 +38,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _register() async {
     if (_formKey.currentState!.validate()) {
-      final url = Uri.parse('http://10.173.128.242:3000/register');
+      final url = Uri.parse('http://localhost:3000/register');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
