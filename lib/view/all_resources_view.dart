@@ -53,7 +53,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
   Future<List<Map<String, dynamic>>> fetchCommentaires(int ressourceId) async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:3000/ressources/$ressourceId/commentaires'),
+        Uri.parse('http://chris-crp.freeboxos.fr:3000/ressources/$ressourceId/commentaires'),
       );
 
       if (response.statusCode == 200) {
@@ -81,7 +81,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:3000/ressources/$ressourceId/commentaire'),
+        Uri.parse('http://chris-crp.freeboxos.fr:3000/ressources/$ressourceId/commentaire'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'userId': userId, 'message': message.trim()}),
       );
@@ -103,7 +103,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:3000/ressources/$ressourceId/likes/$userId'),
+        Uri.parse('http://chris-crp.freeboxos.fr:3000/ressources/$ressourceId/likes/$userId'),
       );
 
       if (response.statusCode == 200) {
@@ -127,7 +127,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:3000/interactions'),
+        Uri.parse('http://chris-crp.freeboxos.fr:3000/interactions'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'userId': userId, 'ressourceId': ressourceId}),
       );
@@ -143,7 +143,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
   Future<List<dynamic>> fetchAllResources() async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:3000/ressourcesAll'),
+        Uri.parse('http://chris-crp.freeboxos.fr:3000/ressourcesAll'),
       );
 
       if (response.statusCode == 200) {
