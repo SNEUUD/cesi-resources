@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Missing import for DateFormat
+import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -143,7 +143,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
   Future<List<dynamic>> fetchAllResources() async {
     try {
       final response = await http.get(
-        Uri.parse('http://0.0.0.0:3000/ressourcesAll'),
+        Uri.parse('http://localhost:3000/ressourcesAll'),
       );
 
       if (response.statusCode == 200) {
@@ -215,15 +215,18 @@ class _AllResourcesViewState extends State<AllResourcesView> {
       final date = DateTime.parse(datetime);
       return DateFormat('dd/MM/yyyy à HH:mm').format(date);
     } catch (e) {
-      return datetime; // Return original if parsing fails
+      return datetime;
     }
   }
 
   Widget _buildErrorState(String error) {
     return Center(
       child: Container(
-        padding: const EdgeInsets.all(24),
-        margin: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.06),
+        margin: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.04,
+          vertical: 16,
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
@@ -232,19 +235,31 @@ class _AllResourcesViewState extends State<AllResourcesView> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline, color: rougeMarianne, size: 48),
-            const SizedBox(height: 16),
+            Icon(
+              Icons.error_outline,
+              color: rougeMarianne,
+              size: MediaQuery.of(context).size.width * 0.12,
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             Text(
               'Erreur de chargement',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: MediaQuery.of(context).size.width * 0.045,
                 fontWeight: FontWeight.w600,
                 color: rougeMarianne,
               ),
+              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
-            Text(error, style: const TextStyle(color: grisFrance)),
-            const SizedBox(height: 16),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+            Text(
+              error,
+              style: TextStyle(
+                color: grisFrance,
+                fontSize: MediaQuery.of(context).size.width * 0.035,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             ElevatedButton(
               onPressed: () {
                 setState(() {
@@ -254,8 +269,17 @@ class _AllResourcesViewState extends State<AllResourcesView> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: bleuFrance,
                 foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.08,
+                  vertical: 12,
+                ),
               ),
-              child: const Text('Réessayer'),
+              child: Text(
+                'Réessayer',
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width * 0.04,
+                ),
+              ),
             ),
           ],
         ),
@@ -266,8 +290,11 @@ class _AllResourcesViewState extends State<AllResourcesView> {
   Widget _buildEmptyState({required String title, required String subtitle, required IconData icon}) {
     return Center(
       child: Container(
-        padding: const EdgeInsets.all(24),
-        margin: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.06),
+        margin: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.04,
+          vertical: 16,
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
@@ -275,19 +302,31 @@ class _AllResourcesViewState extends State<AllResourcesView> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: grisFrance, size: 48),
-            const SizedBox(height: 16),
+            Icon(
+              icon,
+              color: grisFrance,
+              size: MediaQuery.of(context).size.width * 0.12,
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 18,
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width * 0.045,
                 fontWeight: FontWeight.w500,
                 color: grisFrance,
               ),
+              textAlign: TextAlign.center,
             ),
             if (subtitle.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(subtitle, style: const TextStyle(color: grisFrance)),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  color: grisFrance,
+                  fontSize: MediaQuery.of(context).size.width * 0.035,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ],
           ],
         ),
@@ -297,15 +336,17 @@ class _AllResourcesViewState extends State<AllResourcesView> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isSmallScreen = screenWidth < 400;
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
-            Image.asset('assets/icons/logo.png', height: 40),
-            const SizedBox(width: 12),
-            const Text(
-              'Toutes les ressources',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+            Image.asset(
+              'assets/icons/logo.png',
+              height: isSmallScreen ? 32 : 40,
             ),
           ],
         ),
@@ -317,34 +358,67 @@ class _AllResourcesViewState extends State<AllResourcesView> {
           child: Container(height: 1, color: const Color(0xFFE5E5E5)),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: bleuFrance),
+          icon: Icon(
+            Icons.arrow_back,
+            color: bleuFrance,
+            size: isSmallScreen ? 20 : 24,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       backgroundColor: grisClair,
       body: Column(
         children: [
+          // Titre principal
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.04,
+              vertical: screenHeight * 0.02,
+            ),
+            child: Text(
+              'Toutes les ressources',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: screenWidth * 0.07,
+                color: bleuFrance,
+                height: 1.2,
+              ),
+            ),
+          ),
+
           // Barre de contrôles
           Container(
             color: Colors.white,
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(screenWidth * 0.04),
             child: Column(
               children: [
-                Row(
+                // Section tri - responsive
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.sort, color: grisFrance, size: 20),
-                    const SizedBox(width: 8),
-                    const Text(
-                      "Trier par :",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: grisFrance,
-                        fontSize: 14,
-                      ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.sort,
+                          color: grisFrance,
+                          size: isSmallScreen ? 18 : 20,
+                        ),
+                        SizedBox(width: screenWidth * 0.02),
+                        Text(
+                          "Trier par :",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: grisFrance,
+                            fontSize: screenWidth * 0.035,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(height: screenHeight * 0.015),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
                       decoration: BoxDecoration(
                         border: Border.all(color: const Color(0xFFDDDDDD)),
                         borderRadius: BorderRadius.circular(4),
@@ -352,7 +426,11 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                       child: DropdownButton<String>(
                         value: sortBy,
                         underline: const SizedBox(),
-                        style: const TextStyle(color: grisFrance, fontSize: 14),
+                        isExpanded: true,
+                        style: TextStyle(
+                          color: grisFrance,
+                          fontSize: screenWidth * 0.035,
+                        ),
                         items: const [
                           DropdownMenuItem(
                             value: 'dateDesc',
@@ -376,7 +454,9 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: screenHeight * 0.02),
+
+                // Barre de recherche
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -385,15 +465,22 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                   ),
                   child: TextField(
                     controller: _searchController,
-                    style: const TextStyle(fontSize: 14),
+                    style: TextStyle(fontSize: screenWidth * 0.035),
                     decoration: InputDecoration(
                       hintText: "Rechercher une ressource...",
-                      hintStyle: TextStyle(color: grisFrance.withOpacity(0.7)),
-                      prefixIcon: const Icon(Icons.search, color: grisFrance, size: 20),
+                      hintStyle: TextStyle(
+                        color: grisFrance.withOpacity(0.7),
+                        fontSize: screenWidth * 0.035,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: grisFrance,
+                        size: isSmallScreen ? 18 : 20,
+                      ),
                       border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 16,
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: screenHeight * 0.015,
+                        horizontal: screenWidth * 0.04,
                       ),
                     ),
                   ),
@@ -401,7 +488,10 @@ class _AllResourcesViewState extends State<AllResourcesView> {
               ],
             ),
           ),
+
           const SizedBox(height: 1),
+
+          // Liste des ressources
           Expanded(
             child: FutureBuilder<List<dynamic>>(
               future: futureResources,
@@ -430,7 +520,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                     );
                   }
                   return ListView.builder(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(screenWidth * 0.04),
                     itemCount: ressources.length,
                     itemBuilder: (context, index) {
                       final ressource = ressources[index];
@@ -454,8 +544,8 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                               ressource['imageRessource'].isNotEmpty) {
                             try {
                               imageWidget = ConstrainedBox(
-                                constraints: const BoxConstraints(
-                                  maxHeight: 250,
+                                constraints: BoxConstraints(
+                                  maxHeight: screenHeight * 0.3,
                                   maxWidth: double.infinity,
                                 ),
                                 child: Image.memory(
@@ -469,7 +559,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                           }
 
                           return Container(
-                            margin: const EdgeInsets.only(bottom: 16),
+                            margin: EdgeInsets.only(bottom: screenHeight * 0.02),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
@@ -492,16 +582,16 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                                     child: imageWidget,
                                   ),
                                 Padding(
-                                  padding: const EdgeInsets.all(20),
+                                  padding: EdgeInsets.all(screenWidth * 0.05),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      // En-tête avec catégorie
+                                      // Catégorie
                                       if (ressource['nomCatégorie'] != null)
                                         Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                            vertical: 4,
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: screenWidth * 0.02,
+                                            vertical: screenHeight * 0.005,
                                           ),
                                           decoration: BoxDecoration(
                                             color: bleuCumulus,
@@ -509,118 +599,144 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                                           ),
                                           child: Text(
                                             ressource['nomCatégorie'],
-                                            style: const TextStyle(
-                                              fontSize: 12,
+                                            style: TextStyle(
+                                              fontSize: screenWidth * 0.03,
                                               color: bleuFrance,
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
                                         ),
-                                      const SizedBox(height: 12),
+                                      SizedBox(height: screenHeight * 0.015),
 
                                       // Titre
                                       Text(
                                         ressource['titreRessource'] ?? 'Sans titre',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontWeight: FontWeight.w600,
-                                          fontSize: 20,
+                                          fontSize: screenWidth * 0.05,
                                           color: bleuFrance,
                                           height: 1.3,
                                         ),
                                       ),
-                                      const SizedBox(height: 8),
+                                      SizedBox(height: screenHeight * 0.01),
 
-                                      // Auteur et date
-                                      Row(
+                                      // Auteur et date - responsive
+                                      Wrap(
+                                        spacing: screenWidth * 0.04,
+                                        runSpacing: screenHeight * 0.005,
                                         children: [
-                                          const Icon(Icons.person_outline, size: 16, color: grisFrance),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            "Par $auteur",
-                                            style: const TextStyle(fontSize: 13, color: grisFrance),
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.person_outline,
+                                                size: isSmallScreen ? 14 : 16,
+                                                color: grisFrance,
+                                              ),
+                                              SizedBox(width: screenWidth * 0.01),
+                                              Flexible(
+                                                child: Text(
+                                                  "Par $auteur",
+                                                  style: TextStyle(
+                                                    fontSize: screenWidth * 0.032,
+                                                    color: grisFrance,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          if (ressource['dateRessource'] != null) ...[
-                                            const SizedBox(width: 16),
-                                            const Icon(Icons.access_time, size: 16, color: grisFrance),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              formatDateTime(ressource['dateRessource']),
-                                              style: const TextStyle(fontSize: 13, color: grisFrance),
+                                          if (ressource['dateRessource'] != null)
+                                            Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.access_time,
+                                                  size: isSmallScreen ? 14 : 16,
+                                                  color: grisFrance,
+                                                ),
+                                                SizedBox(width: screenWidth * 0.01),
+                                                Text(
+                                                  formatDateTime(ressource['dateRessource']),
+                                                  style: TextStyle(
+                                                    fontSize: screenWidth * 0.032,
+                                                    color: grisFrance,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
                                         ],
                                       ),
-                                      const SizedBox(height: 16),
+                                      SizedBox(height: screenHeight * 0.02),
 
                                       // Description
                                       Text(
                                         ressource['messageRessource'] ?? '',
-                                        style: const TextStyle(
-                                          fontSize: 15,
+                                        style: TextStyle(
+                                          fontSize: screenWidth * 0.037,
                                           color: Colors.black87,
                                           height: 1.5,
                                         ),
                                       ),
-                                      const SizedBox(height: 20),
+                                      SizedBox(height: screenHeight * 0.025),
 
-                                      // Bouton J'aime
-                                      Row(
-                                        children: [
-                                          Material(
-                                            color: Colors.transparent,
-                                            child: InkWell(
-                                              borderRadius: BorderRadius.circular(20),
-                                              onTap: () => toggleLike(ressourceId),
-                                              child: Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                  horizontal: 12,
-                                                  vertical: 8,
+                                      // Bouton J'aime - responsive
+                                      Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          borderRadius: BorderRadius.circular(20),
+                                          onTap: () => toggleLike(ressourceId),
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: screenWidth * 0.03,
+                                              vertical: screenHeight * 0.01,
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  likedStatus[ressourceId] == true
+                                                      ? Icons.favorite
+                                                      : Icons.favorite_border,
+                                                  size: isSmallScreen ? 18 : 20,
+                                                  color: likedStatus[ressourceId] == true
+                                                      ? rougeMarianne
+                                                      : grisFrance,
                                                 ),
-                                                child: Row(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    Icon(
-                                                      likedStatus[ressourceId] == true
-                                                          ? Icons.favorite
-                                                          : Icons.favorite_border,
-                                                      size: 20,
-                                                      color: likedStatus[ressourceId] == true
-                                                          ? rougeMarianne
-                                                          : grisFrance,
-                                                    ),
-                                                    const SizedBox(width: 6),
-                                                    Text(
-                                                      likeCounts[ressourceId]?.toString() ?? '0',
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: likedStatus[ressourceId] == true
-                                                            ? rougeMarianne
-                                                            : grisFrance,
-                                                        fontWeight: FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                  ],
+                                                SizedBox(width: screenWidth * 0.015),
+                                                Text(
+                                                  likeCounts[ressourceId]?.toString() ?? '0',
+                                                  style: TextStyle(
+                                                    fontSize: screenWidth * 0.035,
+                                                    color: likedStatus[ressourceId] == true
+                                                        ? rougeMarianne
+                                                        : grisFrance,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                                 ),
-                                              ),
+                                              ],
                                             ),
                                           ),
-                                        ],
+                                        ),
                                       ),
 
-                                      const Divider(height: 32, color: Color(0xFFE5E5E5)),
+                                      Divider(
+                                        height: screenHeight * 0.04,
+                                        color: const Color(0xFFE5E5E5),
+                                      ),
 
                                       // Section commentaires
-                                      const Text(
+                                      Text(
                                         'Commentaires',
                                         style: TextStyle(
-                                          fontSize: 16,
+                                          fontSize: screenWidth * 0.04,
                                           fontWeight: FontWeight.w600,
                                           color: bleuFrance,
                                         ),
                                       ),
-                                      const SizedBox(height: 12),
+                                      SizedBox(height: screenHeight * 0.015),
 
-                                      // Champ de commentaire
+                                      // Champ de commentaire - responsive
                                       Container(
                                         decoration: BoxDecoration(
                                           border: Border.all(color: const Color(0xFFDDDDDD)),
@@ -628,13 +744,20 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                                         ),
                                         child: TextField(
                                           controller: commentControllers[ressourceId],
-                                          maxLines: 2,
-                                          style: const TextStyle(fontSize: 14),
+                                          maxLines: isSmallScreen ? 2 : 3,
+                                          style: TextStyle(fontSize: screenWidth * 0.035),
                                           decoration: InputDecoration(
                                             hintText: "Écrire un commentaire...",
-                                            hintStyle: TextStyle(color: grisFrance.withOpacity(0.7)),
+                                            hintStyle: TextStyle(
+                                              color: grisFrance.withOpacity(0.7),
+                                              fontSize: screenWidth * 0.035,
+                                            ),
                                             suffixIcon: IconButton(
-                                              icon: const Icon(Icons.send, color: bleuFrance, size: 20),
+                                              icon: Icon(
+                                                Icons.send,
+                                                color: bleuFrance,
+                                                size: isSmallScreen ? 18 : 20,
+                                              ),
                                               onPressed: () async {
                                                 try {
                                                   await sendCommentaire(
@@ -647,7 +770,12 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                                                   if (mounted) {
                                                     ScaffoldMessenger.of(context).showSnackBar(
                                                       SnackBar(
-                                                        content: Text('Erreur : $e'),
+                                                        content: Text(
+                                                          'Erreur : $e',
+                                                          style: TextStyle(
+                                                            fontSize: screenWidth * 0.035,
+                                                          ),
+                                                        ),
                                                         backgroundColor: rougeMarianne,
                                                       ),
                                                     );
@@ -656,21 +784,21 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                                               },
                                             ),
                                             border: InputBorder.none,
-                                            contentPadding: const EdgeInsets.all(12),
+                                            contentPadding: EdgeInsets.all(screenWidth * 0.03),
                                           ),
                                         ),
                                       ),
 
-                                      // Liste des commentaires
+                                      // Liste des commentaires - responsive
                                       if (commentSnapshot.hasData && commentSnapshot.data!.isNotEmpty) ...[
-                                        const SizedBox(height: 16),
+                                        SizedBox(height: screenHeight * 0.02),
                                         ...commentSnapshot.data!
                                             .take(showAllComments[ressourceId]!
                                             ? commentSnapshot.data!.length
                                             : 3)
                                             .map((c) => Container(
-                                          margin: const EdgeInsets.only(bottom: 12),
-                                          padding: const EdgeInsets.all(12),
+                                          margin: EdgeInsets.only(bottom: screenHeight * 0.015),
+                                          padding: EdgeInsets.all(screenWidth * 0.03),
                                           decoration: BoxDecoration(
                                             color: grisClair,
                                             borderRadius: BorderRadius.circular(6),
@@ -680,33 +808,39 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                                             children: [
                                               Row(
                                                 children: [
-                                                  const Icon(Icons.person, size: 16, color: grisFrance),
-                                                  const SizedBox(width: 6),
-                                                  Text(
-                                                    c['pseudo'] ?? 'Anonyme',
-                                                    style: const TextStyle(
-                                                      fontWeight: FontWeight.w500,
-                                                      fontSize: 13,
-                                                      color: bleuFrance,
+                                                  Icon(
+                                                    Icons.person,
+                                                    size: isSmallScreen ? 14 : 16,
+                                                    color: grisFrance,
+                                                  ),
+                                                  SizedBox(width: screenWidth * 0.015),
+                                                  Expanded(
+                                                    child: Text(
+                                                      c['pseudo'] ?? 'Anonyme',
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.w500,
+                                                        fontSize: screenWidth * 0.032,
+                                                        color: bleuFrance,
+                                                      ),
+                                                      overflow: TextOverflow.ellipsis,
                                                     ),
                                                   ),
-                                                  const Spacer(),
                                                   Text(
                                                     c['dateCommentaire'] != null
                                                         ? formatDateTime(c['dateCommentaire'])
                                                         : '',
-                                                    style: const TextStyle(
-                                                      fontSize: 11,
+                                                    style: TextStyle(
+                                                      fontSize: screenWidth * 0.028,
                                                       color: grisFrance,
                                                     ),
                                                   ),
                                                 ],
                                               ),
-                                              const SizedBox(height: 6),
+                                              SizedBox(height: screenHeight * 0.008),
                                               Text(
                                                 c['messageCommentaire'] ?? '',
-                                                style: const TextStyle(
-                                                  fontSize: 14,
+                                                style: TextStyle(
+                                                  fontSize: screenWidth * 0.035,
                                                   color: Colors.black87,
                                                   height: 1.4,
                                                 ),
@@ -716,16 +850,22 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                                         ))
                                             .toList(),
 
+                                        // Bouton "Voir plus de commentaires" - responsive
                                         if (!showAllComments[ressourceId]! &&
                                             commentSnapshot.data!.length > 3)
                                           TextButton.icon(
                                             onPressed: () {
                                               setState(() => showAllComments[ressourceId] = true);
                                             },
-                                            icon: const Icon(Icons.expand_more, size: 16),
+                                            icon: Icon(
+                                              Icons.expand_more,
+                                              size: isSmallScreen ? 14 : 16,
+                                            ),
                                             label: Text(
                                               "Afficher les ${commentSnapshot.data!.length - 3} commentaires restants",
-                                              style: const TextStyle(fontSize: 13),
+                                              style: TextStyle(
+                                                fontSize: screenWidth * 0.032,
+                                              ),
                                             ),
                                             style: TextButton.styleFrom(
                                               foregroundColor: bleuFrance,
