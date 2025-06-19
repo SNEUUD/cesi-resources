@@ -128,6 +128,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
         );
       } else if (sortBy == 'titre') {
         ressources.sort(
+
           (a, b) => (a['titreRessource'] ?? '')
               .toString()
               .toLowerCase()
@@ -152,10 +153,9 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
   List<dynamic> filterResources(List<dynamic> ressources) {
     if (searchQuery.isEmpty) return ressources;
     return ressources.where((ressource) {
-      final titre =
-          (ressource['titreRessource'] ?? '').toString().toLowerCase();
-      final description =
-          (ressource['messageRessource'] ?? '').toString().toLowerCase();
+      final titre = (ressource['titreRessource'] ?? '').toString().toLowerCase();
+      final description = (ressource['messageRessource'] ?? '').toString().toLowerCase();
+
       return titre.contains(searchQuery) || description.contains(searchQuery);
     }).toList();
   }
@@ -176,10 +176,8 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
             Expanded(
               child: Text(
                 'Ressources : ${widget.nomCategorie}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 20,
-                ),
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -392,6 +390,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                     itemBuilder: (context, index) {
                       final ressource = ressources[index];
                       final ressourceId = ressource['idRessource'];
+
                       final auteur =
                           ressource['pseudoUtilisateur'] ?? 'Auteur inconnu';
 
@@ -452,8 +451,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                 Padding(
                                   padding: const EdgeInsets.all(20),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       // Badge de catégorie
                                       Container(
@@ -463,9 +461,8 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                         ),
                                         decoration: BoxDecoration(
                                           color: bleuCumulus,
-                                          borderRadius: BorderRadius.circular(
-                                            4,
-                                          ),
+                                          borderRadius: BorderRadius.circular(4),
+
                                         ),
                                         child: Text(
                                           widget.nomCategorie,
@@ -480,8 +477,8 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
 
                                       // Titre
                                       Text(
-                                        ressource['titreRessource'] ??
-                                            'Sans titre',
+                                        ressource['titreRessource'] ?? 'Sans titre',
+
                                         style: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 20,
@@ -507,6 +504,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                               color: grisFrance,
                                             ),
                                           ),
+
                                           if (ressource['dateRessource'] !=
                                               null) ...[
                                             const SizedBox(width: 16),
@@ -517,6 +515,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                             ),
                                             const SizedBox(width: 4),
                                             Text(
+
                                               formatDateTime(
                                                 ressource['dateRessource'],
                                               ),
@@ -547,47 +546,35 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                           Material(
                                             color: Colors.transparent,
                                             child: InkWell(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              onTap:
-                                                  () => toggleLike(ressourceId),
+                                              borderRadius: BorderRadius.circular(20),
+                                              onTap: () => toggleLike(ressourceId),
                                               child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 12,
-                                                      vertical: 8,
-                                                    ),
+                                                padding: const EdgeInsets.symmetric(
+                                                  horizontal: 12,
+                                                  vertical: 8,
+                                                ),
                                                 child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
+                                                  mainAxisSize: MainAxisSize.min,
                                                   children: [
                                                     Icon(
-                                                      likedStatus[ressourceId] ==
-                                                              true
+                                                      likedStatus[ressourceId] == true
                                                           ? Icons.favorite
-                                                          : Icons
-                                                              .favorite_border,
+                                                          : Icons.favorite_border,
                                                       size: 20,
-                                                      color:
-                                                          likedStatus[ressourceId] ==
-                                                                  true
-                                                              ? rougeMarianne
-                                                              : grisFrance,
+                                                      color: likedStatus[ressourceId] == true
+                                                          ? rougeMarianne
+                                                          : grisFrance,
                                                     ),
                                                     const SizedBox(width: 6),
                                                     Text(
-                                                      likeCounts[ressourceId]
-                                                              ?.toString() ??
-                                                          '0',
+                                                      likeCounts[ressourceId]?.toString() ?? '0',
                                                       style: TextStyle(
                                                         fontSize: 14,
-                                                        color:
-                                                            likedStatus[ressourceId] ==
-                                                                    true
-                                                                ? rougeMarianne
-                                                                : grisFrance,
-                                                        fontWeight:
-                                                            FontWeight.w500,
+                                                        color: likedStatus[ressourceId] == true
+                                                            ? rougeMarianne
+                                                            : grisFrance,
+                                                        fontWeight: FontWeight.w500,
+
                                                       ),
                                                     ),
                                                   ],
@@ -620,22 +607,17 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                           border: Border.all(
                                             color: const Color(0xFFDDDDDD),
                                           ),
-                                          borderRadius: BorderRadius.circular(
-                                            4,
-                                          ),
+                                          borderRadius: BorderRadius.circular(4),
                                         ),
                                         child: TextField(
-                                          controller:
-                                              commentControllers[ressourceId],
+                                          controller: commentControllers[ressourceId],
                                           maxLines: 2,
                                           style: const TextStyle(fontSize: 14),
                                           decoration: InputDecoration(
-                                            hintText:
-                                                "Écrire un commentaire...",
+                                            hintText: "Écrire un commentaire...",
                                             hintStyle: TextStyle(
-                                              color: grisFrance.withOpacity(
-                                                0.7,
-                                              ),
+                                              color: grisFrance.withOpacity(0.7),
+
                                             ),
                                             suffixIcon: IconButton(
                                               icon: const Icon(
@@ -647,6 +629,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                                 try {
                                                   await sendCommentaire(
                                                     ressourceId,
+
                                                     commentControllers[ressourceId]!
                                                         .text,
                                                   );
@@ -669,6 +652,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                               },
                                             ),
                                             border: InputBorder.none,
+
                                             contentPadding:
                                                 const EdgeInsets.all(12),
                                           ),
@@ -687,20 +671,15 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                             )
                                             .map(
                                               (c) => Container(
-                                                margin: const EdgeInsets.only(
-                                                  bottom: 12,
-                                                ),
-                                                padding: const EdgeInsets.all(
-                                                  12,
-                                                ),
+                                                margin: const EdgeInsets.only(bottom: 12),
+                                                padding: const EdgeInsets.all(12),
                                                 decoration: BoxDecoration(
                                                   color: grisClair,
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
+                                                  borderRadius: BorderRadius.circular(6),
                                                 ),
                                                 child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+
                                                   children: [
                                                     Row(
                                                       children: [
@@ -709,28 +688,20 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                                           size: 16,
                                                           color: grisFrance,
                                                         ),
-                                                        const SizedBox(
-                                                          width: 6,
-                                                        ),
+                                                        const SizedBox(width: 6),
                                                         Text(
                                                           c['pseudo'],
-                                                          style:
-                                                              const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontSize: 13,
-                                                                color:
-                                                                    bleuFrance,
-                                                              ),
+                                                          style: const TextStyle(
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 13,
+                                                            color: bleuFrance,
+                                                          ),
                                                         ),
                                                         const Spacer(),
                                                         Text(
-                                                          c['dateCommentaire'] !=
-                                                                  null
-                                                              ? formatDateTime(
-                                                                c['dateCommentaire'],
-                                                              )
+                                                          c['dateCommentaire'] != null
+                                                              ? formatDateTime(c['dateCommentaire'])
+
                                                               : '',
                                                           style: TextStyle(
                                                             fontSize: 11,
@@ -758,21 +729,14 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
                                             commentSnapshot.data!.length > 3)
                                           TextButton.icon(
                                             onPressed: () {
-                                              setState(
-                                                () =>
-                                                    showAllComments[ressourceId] =
-                                                        true,
-                                              );
+                                              setState(() =>
+                                                  showAllComments[ressourceId] = true);
                                             },
-                                            icon: const Icon(
-                                              Icons.expand_more,
-                                              size: 16,
-                                            ),
+                                            icon: const Icon(Icons.expand_more, size: 16),
                                             label: Text(
                                               "Afficher les ${commentSnapshot.data!.length - 3} commentaires restants",
-                                              style: const TextStyle(
-                                                fontSize: 13,
-                                              ),
+                                              style: const TextStyle(fontSize: 13),
+
                                             ),
                                             style: TextButton.styleFrom(
                                               foregroundColor: bleuFrance,
