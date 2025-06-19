@@ -13,9 +13,8 @@ const { db, dbTest } = require("./db");
 
 const app = express();
 app.use(cors());
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
-app.use(express.json({ limit: '10mb' }));
-
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
+app.use(express.json({ limit: "10mb" }));
 
 const getDB = (req) => (req.path.startsWith("/test") ? dbTest : db);
 
@@ -325,15 +324,46 @@ app.get(["/ressources", "/test/ressources"], (req, res) => {
     return res.status(400).json({ error: "Catégorie manquante" });
   }
 
-  const sql = `
-    SELECT r.idRessource, r.titreRessource AS titre, r.messageRessource AS description,
-           r.dateRessource, r.statusRessource, r.imageRessource
+  const sql = `SELECT r.idRessource, r.titreRessource, r.messageRessource,
+           r.dateRessource, r.statusRessource, r.imageRessource,
+           u.pseudoUtilisateur
     FROM Ressources r
     JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
-    WHERE c.nomCatégorie = ? and r.statusRessource = 'affiche'
-    ORDER BY r.dateRessource DESC
-  `;
+    LEFT JOIN Utilisateurs u ON r.Utilisateurs_idUtilisateur = u.idUtilisateur
+    WHERE c.nomCatégorie = ? AND r.statusRessource = 'affiche'
+    ORDER BY r.dateRessource DESC`;
+  const conn = getDB(req);
+  conn.query(sql, [categorie], (err, results) => {
+    if (err) {
+      console.error("Erreur lors de la récupération des ressources :", err);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
 
+    const ressources = results.map((ressource) => ({
+      ...ressource,
+      imageRessource: ressource.imageRessource
+        ? Buffer.from(ressource.imageRessource).toString("base64")
+        : null,
+    }));
+
+    res.json(ressources);
+  });
+});
+// --- RESSOURCES PAR CATÉGORIE ---
+app.get(["/ressources", "/test/ressources"], (req, res) => {
+  const { categorie } = req.query;
+  if (!categorie) {
+    return res.status(400).json({ error: "Catégorie manquante" });
+  }
+
+  const sql = `SELECT r.idRessource, r.titreRessource, r.messageRessource,
+           r.dateRessource, r.statusRessource, r.imageRessource,
+           u.pseudoUtilisateur
+    FROM Ressources r
+    JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
+    LEFT JOIN Utilisateurs u ON r.Utilisateurs_idUtilisateur = u.idUtilisateur
+    WHERE c.nomCatégorie = ? AND r.statusRessource = 'affiche'
+    ORDER BY r.dateRessource DESC`;
   const conn = getDB(req);
   conn.query(sql, [categorie], (err, results) => {
     if (err) {
@@ -405,18 +435,15 @@ app.get("/ressourcesAll", (req, res) => {
       return res.status(500).json({ error: "Erreur serveur" });
     }
 
-    results.forEach(r => {
+    results.forEach((r) => {
       if (r.imageRessource) {
-        r.imageRessource = Buffer.from(r.imageRessource).toString('base64');
+        r.imageRessource = Buffer.from(r.imageRessource).toString("base64");
       }
     });
 
     res.status(200).json(results);
   });
 });
-
-
-
 
 // --- GESTION DES UTILISATEURS (ADMIN) ---
 app.get(["/utilisateurs", "/test/utilisateurs"], (req, res) => {
@@ -527,7 +554,7 @@ app.put("/ressources/:idRessource", (req, res) => {
     }
 
     const idCat = results[0].idCatégorie;
-const imageBuffer = image ? Buffer.from(image, "base64") : null;
+    const imageBuffer = image ? Buffer.from(image, "base64") : null;
 
     const sqlUpdate = `
       UPDATE Ressources
@@ -565,11 +592,9 @@ app.delete("/ressources/:idRessource", (req, res) => {
   db.query(deleteCommentsSql, [idRessource], (err, result) => {
     if (err) {
       console.error("Erreur lors de la suppression des commentaires :", err);
-      return res
-        .status(500)
-        .json({
-          error: "Erreur serveur lors de la suppression des commentaires",
-        });
+      return res.status(500).json({
+        error: "Erreur serveur lors de la suppression des commentaires",
+      });
     }
 
     // Ensuite, supprimez la ressource
@@ -577,11 +602,9 @@ app.delete("/ressources/:idRessource", (req, res) => {
     db.query(deleteResourceSql, [idRessource], (err, result) => {
       if (err) {
         console.error("Erreur lors de la suppression de la ressource :", err);
-        return res
-          .status(500)
-          .json({
-            error: "Erreur serveur lors de la suppression de la ressource",
-          });
+        return res.status(500).json({
+          error: "Erreur serveur lors de la suppression de la ressource",
+        });
       }
       res.status(200).json({ message: "Ressource supprimée avec succès" });
     });
@@ -623,11 +646,9 @@ app.delete(
     conn.query(deleteCommentsSql, [id], (err, result) => {
       if (err) {
         console.error("Erreur lors de la suppression des commentaires :", err);
-        return res
-          .status(500)
-          .json({
-            error: "Erreur serveur lors de la suppression des commentaires",
-          });
+        return res.status(500).json({
+          error: "Erreur serveur lors de la suppression des commentaires",
+        });
       }
 
       // Ensuite, supprimez la ressource
@@ -635,11 +656,9 @@ app.delete(
       conn.query(deleteResourceSql, [id], (err, result) => {
         if (err) {
           console.error("Erreur lors de la suppression de la ressource :", err);
-          return res
-            .status(500)
-            .json({
-              error: "Erreur serveur lors de la suppression de la ressource",
-            });
+          return res.status(500).json({
+            error: "Erreur serveur lors de la suppression de la ressource",
+          });
         }
         res.json({ message: "Ressource supprimée" });
       });
@@ -827,7 +846,7 @@ app.get("/ressources/:id/commentaires", (req, res) => {
     const commentaires = [];
     const commentairesMap = {};
 
-    results.forEach(comment => {
+    results.forEach((comment) => {
       if (!comment.commentaire_parent_id) {
         // C'est un commentaire principal
         comment.reponses = [];
