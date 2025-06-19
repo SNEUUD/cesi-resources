@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'layout/header.dart';
+import '../main.dart';
 import 'category_ressources_page.dart';
 
 class Category {
@@ -120,13 +120,41 @@ class _CategoriesPageState extends State<CategoriesPage> {
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return Scaffold(
-      appBar: const Header(),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (_) => const HomePage()),
+                            (route) => false,
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Color(0xFF0000CC),
+                      size: 24,
+                    ),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Retour',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF0000CC),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
               const Text(
                 'Catégories',
                 style: TextStyle(
@@ -137,7 +165,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Parcourez l’ensemble des catégories disponibles pour explorer les thématiques proposées. Chaque catégorie regroupe des ressources spécifiques pour vous aider à mieux comprendre un sujet ou approfondir vos connaissances. Utilisez la barre de recherche pour filtrer rapidement selon vos centres d’intérêt.',
+                "Parcourez l\'ensemble des catégories disponibles pour explorer les thématiques proposées. Chaque catégorie regroupe des ressources spécifiques pour vous aider à mieux comprendre un sujet ou approfondir vos connaissances. Utilisez la barre de recherche pour filtrer rapidement selon vos centres d'intérêt.",
                 style: TextStyle(fontSize: 12, color: Colors.black54),
               ),
               const SizedBox(height: 16),
