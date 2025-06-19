@@ -129,7 +129,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
           child: Text(
-            "Rejoins d'aventure !",
+            "Rejoins l'aventure !",
             style: TextStyle(fontSize: fontSizeText),
           ),
         ),

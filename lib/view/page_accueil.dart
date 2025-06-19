@@ -168,7 +168,7 @@ class _HomePageState extends State<HomePage> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 30, vertical: 15),
                           ),
-                          child: const Text("Rejoins d'aventure !"),
+                          child: const Text("Rejoins l'aventure !"),
                         ),
                       ],
                     ),
