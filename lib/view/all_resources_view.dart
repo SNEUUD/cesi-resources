@@ -143,7 +143,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
   Future<List<dynamic>> fetchAllResources() async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.173.128.242:3000/ressourcesAll'),
+        Uri.parse('http://0.0.0.0:3000/ressourcesAll'),
       );
 
       if (response.statusCode == 200) {

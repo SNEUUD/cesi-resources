@@ -58,7 +58,7 @@ class _CreateResourcePageState extends State<CreateResourcePage> {
 
   Future<List<Category>> fetchCategories() async {
     final response = await http.get(
-      Uri.parse('http://10.173.128.242:3000/categories'),
+      Uri.parse('http://0.0.0.0:3000/categories'),
     );
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
@@ -95,7 +95,7 @@ class _CreateResourcePageState extends State<CreateResourcePage> {
         _selectedImageBytes != null ? base64Encode(_selectedImageBytes!) : null;
 
     final response = await http.post(
-      Uri.parse('http://10.173.128.242:3000/resources'),
+      Uri.parse('http://0.0.0.0:3000/resources'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'title': _title,
