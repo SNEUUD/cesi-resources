@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../main.dart';
-import '../layout/header.dart';
 
 class UsersAdminPage extends StatefulWidget {
   const UsersAdminPage({super.key});
@@ -36,7 +34,7 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
 
   Future<List<dynamic>> fetchUsers() async {
     final response = await http.get(
-      Uri.parse('http://10.173.128.242:3000/utilisateurs'),
+      Uri.parse('http://chris-crp.freeboxos.fr:3000/utilisateurs'),
     );
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -47,7 +45,7 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
 
   Future<void> suspendUser(String userId) async {
     final response = await http.patch(
-      Uri.parse('http://10.173.128.242:3000/utilisateurs/$userId/suspendre'),
+      Uri.parse('http://chris-crp.freeboxos.fr:3000/utilisateurs/$userId/suspendre'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'statusUtilisateur': 'désactivé'}),
     );
@@ -63,7 +61,7 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
 
   Future<void> deleteUser(String userId) async {
     final response = await http.delete(
-      Uri.parse('http://10.173.128.242:3000/utilisateurs/$userId'),
+      Uri.parse('http://chris-crp.freeboxos.fr:3000/utilisateurs/$userId'),
     );
     if (response.statusCode == 200) {
       setState(() {
@@ -77,7 +75,7 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
 
   Future<void> updateUserStatus(String userId, String status) async {
     final response = await http.patch(
-      Uri.parse('http://10.173.128.242:3000/utilisateurs/$userId/suspendre'),
+      Uri.parse('http://chris-crp.freeboxos.fr:3000/utilisateurs/$userId/suspendre'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'statusUtilisateur': status}),
     );
@@ -95,7 +93,7 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
 
   Future<void> promoteToAdmin(String userId) async {
     final response = await http.patch(
-      Uri.parse('http://10.173.128.242:3000/utilisateurs/$userId/role'),
+      Uri.parse('http://chris-crp.freeboxos.fr:3000/utilisateurs/$userId/role'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'role': 2}),
     );
@@ -111,7 +109,7 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
 
   Future<void> demoteToUser(String userId) async {
     final response = await http.patch(
-      Uri.parse('http://10.173.128.242:3000/utilisateurs/$userId/role'),
+      Uri.parse('http://chris-crp.freeboxos.fr:3000/utilisateurs/$userId/role'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'role': 1}),
     );
@@ -127,7 +125,7 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
 
   Future<List<dynamic>> fetchMaskedResources() async {
     final response = await http.get(
-      Uri.parse('http://10.173.128.242:3000/resources_admin'),
+      Uri.parse('http://chris-crp.freeboxos.fr:3000/resources_admin'),
     );
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -138,7 +136,7 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
 
   Future<void> validateResource(String resourceId) async {
     final response = await http.patch(
-      Uri.parse('http://10.173.128.242:3000/resources_admin/$resourceId/valider'),
+      Uri.parse('http://chris-crp.freeboxos.fr:3000/resources_admin/$resourceId/valider'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'statusRessource': 'affiche'}),
     );
@@ -154,7 +152,7 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
 
   Future<void> deleteResource(String resourceId) async {
     final response = await http.delete(
-      Uri.parse('http://10.173.128.242:3000/resources_admin/$resourceId'),
+      Uri.parse('http://chris-crp.freeboxos.fr:3000/resources_admin/$resourceId'),
     );
     if (response.statusCode == 200) {
       setState(() {
