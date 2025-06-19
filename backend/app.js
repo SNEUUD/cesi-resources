@@ -326,12 +326,13 @@ app.get(["/ressources", "/test/ressources"], (req, res) => {
   }
 
   const sql = `
-    SELECT r.idRessource, r.titreRessource AS titre, r.messageRessource AS description,
-           r.dateRessource, r.statusRessource, r.imageRessource
+    SELECT r.idRessource, r.titreRessource, r.messageRessource,
+           r.dateRessource, r.statusRessource, r.imageRessource,
+           u.pseudoUtilisateur
     FROM Ressources r
     JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
-    WHERE c.nomCatégorie = ? and r.statusRessource = 'affiche'
-
+    LEFT JOIN Utilisateurs u ON r.Utilisateurs_idUtilisateur = u.idUtilisateur
+    WHERE c.nomCatégorie = ? AND r.statusRessource = 'affiche'
     ORDER BY r.dateRessource DESC
   `;
 
