@@ -43,7 +43,11 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
 
   Future<List<Map<String, dynamic>>> fetchCommentaires(int ressourceId) async {
     final response = await http.get(
+<<<<<<< HEAD
       Uri.parse('http://chris-crp.freeboxos.fr:3000/ressources/$ressourceId/commentaires'),
+=======
+      Uri.parse('http://10.173.128.242:3000/ressources/$ressourceId/commentaires'),
+>>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
     );
 
     if (response.statusCode == 200) {
@@ -60,7 +64,11 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
     if (userId == null || message.trim().isEmpty) return;
 
     final response = await http.post(
+<<<<<<< HEAD
       Uri.parse('http://chris-crp.freeboxos.fr:3000/ressources/$ressourceId/commentaire'),
+=======
+      Uri.parse('http://10.173.128.242:3000/ressources/$ressourceId/commentaire'),
+>>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'userId': userId, 'message': message.trim()}),
     );
@@ -78,7 +86,11 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
     if (userId == null) return;
 
     final response = await http.get(
+<<<<<<< HEAD
       Uri.parse('http://chris-crp.freeboxos.fr:3000/ressources/$ressourceId/likes/$userId'),
+=======
+      Uri.parse('http://10.173.128.242:3000/ressources/$ressourceId/likes/$userId'),
+>>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
     );
 
     if (response.statusCode == 200) {
@@ -96,7 +108,11 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
     if (userId == null) return;
 
     final response = await http.post(
+<<<<<<< HEAD
       Uri.parse('http://chris-crp.freeboxos.fr:3000/interactions'),
+=======
+      Uri.parse('http://10.173.128.242:3000/interactions'),
+>>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'userId': userId, 'ressourceId': ressourceId}),
     );
@@ -109,7 +125,11 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
   Future<List<dynamic>> fetchResources() async {
     final response = await http.get(
       Uri.parse(
+<<<<<<< HEAD
         'http://chris-crp.freeboxos.fr:3000/ressources?categorie=${widget.nomCategorie}',
+=======
+        'http://10.173.128.242:3000/ressources?categorie=${widget.nomCategorie}',
+>>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
       ),
     );
     if (response.statusCode == 200) {

@@ -15,7 +15,7 @@ void main() {
 
     // 1. Création de la ressource
     final postResponse = await http.post(
-      Uri.parse('http://localhost:3000/test/resources'),
+      Uri.parse('http://10.173.128.242:3000/test/resources'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'title': title,
@@ -32,7 +32,7 @@ void main() {
 
     // 2. Vérification de la présence en base
     final getResponse = await http.get(
-      Uri.parse('http://localhost:3000/test/ressourcesAll'),
+      Uri.parse('http://10.173.128.242:3000/test/ressourcesAll'),
     );
     expect(getResponse.statusCode, 200);
 

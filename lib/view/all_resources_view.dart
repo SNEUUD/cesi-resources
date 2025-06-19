@@ -53,7 +53,11 @@ class _AllResourcesViewState extends State<AllResourcesView> {
   Future<List<Map<String, dynamic>>> fetchCommentaires(int ressourceId) async {
     try {
       final response = await http.get(
+<<<<<<< HEAD
         Uri.parse('http://chris-crp.freeboxos.fr:3000/ressources/$ressourceId/commentaires'),
+=======
+        Uri.parse('http://10.173.128.242:3000/ressources/$ressourceId/commentaires'),
+>>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
       );
 
       if (response.statusCode == 200) {
@@ -81,7 +85,11 @@ class _AllResourcesViewState extends State<AllResourcesView> {
 
     try {
       final response = await http.post(
+<<<<<<< HEAD
         Uri.parse('http://chris-crp.freeboxos.fr:3000/ressources/$ressourceId/commentaire'),
+=======
+        Uri.parse('http://10.173.128.242:3000/ressources/$ressourceId/commentaire'),
+>>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'userId': userId, 'message': message.trim()}),
       );
@@ -103,7 +111,11 @@ class _AllResourcesViewState extends State<AllResourcesView> {
 
     try {
       final response = await http.get(
+<<<<<<< HEAD
         Uri.parse('http://chris-crp.freeboxos.fr:3000/ressources/$ressourceId/likes/$userId'),
+=======
+        Uri.parse('http://10.173.128.242:3000/ressources/$ressourceId/likes/$userId'),
+>>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
       );
 
       if (response.statusCode == 200) {
@@ -127,7 +139,11 @@ class _AllResourcesViewState extends State<AllResourcesView> {
 
     try {
       final response = await http.post(
+<<<<<<< HEAD
         Uri.parse('http://chris-crp.freeboxos.fr:3000/interactions'),
+=======
+        Uri.parse('http://10.173.128.242:3000/interactions'),
+>>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'userId': userId, 'ressourceId': ressourceId}),
       );
@@ -143,7 +159,11 @@ class _AllResourcesViewState extends State<AllResourcesView> {
   Future<List<dynamic>> fetchAllResources() async {
     try {
       final response = await http.get(
+<<<<<<< HEAD
         Uri.parse('http://chris-crp.freeboxos.fr:3000/ressourcesAll'),
+=======
+        Uri.parse('http://10.173.128.242:3000/ressourcesAll'),
+>>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
       );
 
       if (response.statusCode == 200) {
@@ -222,8 +242,8 @@ class _AllResourcesViewState extends State<AllResourcesView> {
   Widget _buildErrorState(String error) {
     return Center(
       child: Container(
-        padding: const EdgeInsets.all(32),
-        margin: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24), // Réduit pour mobile
+        margin: const EdgeInsets.all(16),  // Réduit pour mobile
         constraints: const BoxConstraints(maxWidth: 600),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -232,7 +252,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
+              blurRadius: 8, // Réduit pour mobile
               offset: const Offset(0, 4),
             ),
           ],
@@ -243,13 +263,13 @@ class _AllResourcesViewState extends State<AllResourcesView> {
             const Icon(
               Icons.error_outline,
               color: rougeMarianne,
-              size: 48,
+              size: 40, // Taille réduite
             ),
             const SizedBox(height: 16),
             const Text(
               'Erreur de chargement',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 18, // Taille réduite
                 fontWeight: FontWeight.w600,
                 color: rougeMarianne,
               ),
@@ -260,11 +280,11 @@ class _AllResourcesViewState extends State<AllResourcesView> {
               error,
               style: const TextStyle(
                 color: grisFrance,
-                fontSize: 14,
+                fontSize: 13, // Taille réduite
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () {
                 setState(() {
@@ -276,7 +296,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: bleuFrance,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Réduit
               ),
             ),
           ],
@@ -288,8 +308,8 @@ class _AllResourcesViewState extends State<AllResourcesView> {
   Widget _buildEmptyState({required String title, required String subtitle, required IconData icon}) {
     return Center(
       child: Container(
-        padding: const EdgeInsets.all(32),
-        margin: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24), // Réduit pour mobile
+        margin: const EdgeInsets.all(16),  // Réduit pour mobile
         constraints: const BoxConstraints(maxWidth: 600),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -297,7 +317,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
+              blurRadius: 8, // Réduit pour mobile
               offset: const Offset(0, 4),
             ),
           ],
@@ -308,13 +328,13 @@ class _AllResourcesViewState extends State<AllResourcesView> {
             Icon(
               icon,
               color: grisFrance,
-              size: 48,
+              size: 40, // Taille réduite
             ),
             const SizedBox(height: 16),
             Text(
               title,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 18, // Taille réduite
                 fontWeight: FontWeight.w500,
                 color: grisFrance,
               ),
@@ -326,7 +346,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                 subtitle,
                 style: const TextStyle(
                   color: grisFrance,
-                  fontSize: 14,
+                  fontSize: 13, // Taille réduite
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -337,30 +357,30 @@ class _AllResourcesViewState extends State<AllResourcesView> {
     );
   }
 
+  // BARRE DE CONTRÔLE ADAPTÉE MOBILE
   Widget _buildControlsBar() {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.all(24),
-      child: Row(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12), // Réduit
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Section tri
-          Expanded(
-            flex: 1,
-            child: Row(
-              children: [
-                const Icon(Icons.sort, color: grisFrance, size: 20),
-                const SizedBox(width: 8),
-                const Text(
-                  "Trier par :",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: grisFrance,
-                    fontSize: 14,
-                  ),
+          Row(
+            children: [
+              const Icon(Icons.sort, color: grisFrance, size: 20),
+              const SizedBox(width: 8),
+              const Text(
+                "Trier par :",
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: grisFrance,
+                  fontSize: 14,
                 ),
-                const SizedBox(width: 12),
-                Container(
-                  width: 200,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                     border: Border.all(color: const Color(0xFFDDDDDD)),
@@ -392,35 +412,29 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                     onChanged: onSortChanged,
                   ),
                 ),
-              ],
-            ),
-          ),
-
-          const SizedBox(width: 24),
-
-          // Barre de recherche
-          Expanded(
-            flex: 1,
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: 400),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: const Color(0xFFDDDDDD)),
-                borderRadius: BorderRadius.circular(6),
               ),
-              child: TextField(
-                controller: _searchController,
-                style: const TextStyle(fontSize: 14),
-                decoration: const InputDecoration(
-                  hintText: "Rechercher une ressource...",
-                  hintStyle: TextStyle(
-                    color: Color(0xFF999999),
-                    fontSize: 14,
-                  ),
-                  prefixIcon: Icon(Icons.search, color: grisFrance, size: 20),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Barre de recherche
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: const Color(0xFFDDDDDD)),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: TextField(
+              controller: _searchController,
+              style: const TextStyle(fontSize: 14),
+              decoration: const InputDecoration(
+                hintText: "Rechercher une ressource...",
+                hintStyle: TextStyle(
+                  color: Color(0xFF999999),
+                  fontSize: 14,
                 ),
+                prefixIcon: Icon(Icons.search, color: grisFrance, size: 20),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               ),
             ),
           ),
@@ -429,6 +443,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
     );
   }
 
+  // CARTE DE RESSOURCE ADAPTÉE MOBILE
   Widget _buildResourceCard(dynamic ressource, List<Map<String, dynamic>> comments) {
     final ressourceId = ressource['idRessource'];
     final auteur = ressource['pseudoUtilisateur'] ?? 'Auteur inconnu';
@@ -436,13 +451,13 @@ class _AllResourcesViewState extends State<AllResourcesView> {
     Widget? imageWidget;
     if (ressource['imageRessource'] != null && ressource['imageRessource'].isNotEmpty) {
       try {
-        imageWidget = Container(
-          width: double.infinity,
-          height: 200,
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-            image: DecorationImage(
-              image: MemoryImage(base64Decode(ressource['imageRessource'])),
+        imageWidget = ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+          child: SizedBox(
+            width: double.infinity,
+            height: 160, // Hauteur fixe pour mobile
+            child: Image.memory(
+              base64Decode(ressource['imageRessource']),
               fit: BoxFit.cover,
             ),
           ),
@@ -453,16 +468,15 @@ class _AllResourcesViewState extends State<AllResourcesView> {
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 24),
-      constraints: const BoxConstraints(maxWidth: 800),
+      margin: const EdgeInsets.only(bottom: 16), // Marge réduite
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            blurRadius: 8, // Réduit pour mobile
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -471,7 +485,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
         children: [
           if (imageWidget != null) imageWidget,
           Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(12), // Padding réduit
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -480,7 +494,7 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                   children: [
                     if (ressource['nomCatégorie'] != null)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: bleuCumulus,
                           borderRadius: BorderRadius.circular(6),
@@ -488,233 +502,128 @@ class _AllResourcesViewState extends State<AllResourcesView> {
                         child: Text(
                           ressource['nomCatégorie'],
                           style: const TextStyle(
-                            fontSize: 12,
                             color: bleuFrance,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
                           ),
                         ),
                       ),
+                    const SizedBox(width: 8),
+                    Text(
+                      "par $auteur",
+                      style: const TextStyle(
+                        color: grisFrance,
+                        fontSize: 12,
+                      ),
+                    ),
                     const Spacer(),
-                    Row(
-                      children: [
-                        const Icon(Icons.person_outline, size: 16, color: grisFrance),
-                        const SizedBox(width: 4),
-                        Text(
-                          "Par $auteur",
-                          style: const TextStyle(fontSize: 13, color: grisFrance),
-                        ),
-                        if (ressource['dateRessource'] != null) ...[
-                          const SizedBox(width: 16),
-                          const Icon(Icons.access_time, size: 16, color: grisFrance),
-                          const SizedBox(width: 4),
-                          Text(
-                            formatDateTime(ressource['dateRessource']),
-                            style: const TextStyle(fontSize: 13, color: grisFrance),
-                          ),
-                        ],
-                      ],
+                    Text(
+                      formatDateTime(ressource['dateRessource'] ?? ''),
+                      style: const TextStyle(
+                        color: grisFrance,
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-
+                const SizedBox(height: 10),
                 // Titre
                 Text(
-                  ressource['titreRessource'] ?? 'Sans titre',
+                  ressource['titreRessource'] ?? '',
                   style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
                     color: bleuFrance,
-                    height: 1.3,
                   ),
                 ),
-                const SizedBox(height: 12),
-
+                const SizedBox(height: 8),
                 // Description
                 Text(
                   ressource['messageRessource'] ?? '',
                   style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.black87,
-                    height: 1.5,
+                    color: grisFrance,
+                    fontSize: 14,
                   ),
                 ),
-                const SizedBox(height: 20),
-
-                // Bouton J'aime
-                MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () => toggleLike(ressourceId),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: likedStatus[ressourceId] == true
-                            ? rougeMarianne.withOpacity(0.1)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: likedStatus[ressourceId] == true
-                              ? rougeMarianne
-                              : grisFrance.withOpacity(0.3),
-                        ),
-                      ),
+                const SizedBox(height: 12),
+                // Boutons d'interaction
+                Row(
+                  children: [
+                    // Bouton Like
+                    InkWell(
+                      onTap: () => toggleLike(ressourceId),
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             likedStatus[ressourceId] == true
                                 ? Icons.favorite
                                 : Icons.favorite_border,
-                            size: 18,
                             color: likedStatus[ressourceId] == true
                                 ? rougeMarianne
                                 : grisFrance,
+                            size: 20,
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 4),
                           Text(
-                            likeCounts[ressourceId]?.toString() ?? '0',
-                            style: TextStyle(
+                            '${likeCounts[ressourceId] ?? 0}',
+                            style: const TextStyle(
+                              color: grisFrance,
                               fontSize: 14,
-                              color: likedStatus[ressourceId] == true
-                                  ? rougeMarianne
-                                  : grisFrance,
-                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
+                    const SizedBox(width: 16),
+                    // Bouton Commentaire
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          showAllComments[ressourceId] =
+                          !(showAllComments[ressourceId] ?? false);
+                        });
+                      },
+                      child: const Row(
+                        children: [
+                          Icon(
+                            Icons.comment_outlined,
+                            color: grisFrance,
+                            size: 20,
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            'Commenter',
+                            style: TextStyle(
+                              color: grisFrance,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-
-                const Divider(height: 32, color: Color(0xFFE5E5E5)),
-
-                // Section commentaires
-                const Text(
-                  'Commentaires',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: bleuFrance,
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Champ de commentaire
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xFFDDDDDD)),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: TextField(
-                    controller: commentControllers[ressourceId],
-                    maxLines: 3,
-                    style: const TextStyle(fontSize: 14),
+                // Section commentaires (simplifiée pour l'exemple)
+                if (showAllComments[ressourceId] == true) ...[
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: commentControllers[ressourceId] ??=
+                        TextEditingController(),
                     decoration: InputDecoration(
                       hintText: "Écrire un commentaire...",
-                      hintStyle: TextStyle(
-                        color: grisFrance.withOpacity(0.7),
-                        fontSize: 14,
-                      ),
                       suffixIcon: IconButton(
-                        icon: const Icon(Icons.send, color: bleuFrance, size: 20),
+                        icon: const Icon(Icons.send),
                         onPressed: () async {
-                          try {
-                            await sendCommentaire(
-                              ressourceId,
-                              commentControllers[ressourceId]!.text,
-                            );
+                          final message = commentControllers[ressourceId]!.text;
+                          if (message.isNotEmpty) {
+                            await sendCommentaire(ressourceId, message);
                             commentControllers[ressourceId]!.clear();
                             setState(() {});
-                          } catch (e) {
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Erreur : $e'),
-                                  backgroundColor: rougeMarianne,
-                                ),
-                              );
-                            }
                           }
                         },
                       ),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.all(16),
                     ),
                   ),
-                ),
-
-                // Liste des commentaires
-                if (comments.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  ...comments
-                      .take(showAllComments[ressourceId]! ? comments.length : 3)
-                      .map((c) => Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: grisClair,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.person, size: 16, color: grisFrance),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                c['pseudo'] ?? 'Anonyme',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 13,
-                                  color: bleuFrance,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              c['dateCommentaire'] != null
-                                  ? formatDateTime(c['dateCommentaire'])
-                                  : '',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: grisFrance,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          c['messageCommentaire'] ?? '',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.black87,
-                            height: 1.4,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ))
-                      .toList(),
-
-                  // Bouton "Voir plus de commentaires"
-                  if (!showAllComments[ressourceId]! && comments.length > 3)
-                    TextButton.icon(
-                      onPressed: () {
-                        setState(() => showAllComments[ressourceId] = true);
-                      },
-                      icon: const Icon(Icons.expand_more, size: 16),
-                      label: Text(
-                        "Afficher les ${comments.length - 3} commentaires restants",
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                      style: TextButton.styleFrom(
-                        foregroundColor: bleuFrance,
-                        padding: EdgeInsets.zero,
-                      ),
-                    ),
                 ],
               ],
             ),
@@ -727,30 +636,10 @@ class _AllResourcesViewState extends State<AllResourcesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: grisClair,
       appBar: AppBar(
-        title: Row(
-          children: [
-            Image.asset('assets/icons/logo.png', height: 40),
-            const SizedBox(width: 16),
-            const Text(
-              'Toutes les ressources',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 20,
-                color: bleuFrance,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.white,
-        foregroundColor: bleuFrance,
-        elevation: 0,
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(height: 1, color: Color(0xFFE5E5E5)),
-        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: bleuFrance),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (_) => const HomePage()),
@@ -758,76 +647,57 @@ class _AllResourcesViewState extends State<AllResourcesView> {
             );
           },
         ),
+        title: const Text("Toutes les ressources"),
+        backgroundColor: bleuFrance,
+        foregroundColor: Colors.white,
       ),
-      backgroundColor: grisClair,
-      body: Column(
-        children: [
-          _buildControlsBar(),
-          const Divider(height: 1, color: Color(0xFFE5E5E5)),
-
-          Expanded(
-            child: FutureBuilder<List<dynamic>>(
-              future: futureResources,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(bleuFrance),
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return _buildErrorState('${snapshot.error}');
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return _buildEmptyState(
-                    title: 'Aucune ressource disponible',
-                    subtitle: '',
-                    icon: Icons.folder_open,
-                  );
-                } else {
-                  final ressources = filterResources(snapshot.data!);
-                  if (ressources.isEmpty) {
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildControlsBar(),
+            Expanded(
+              child: FutureBuilder<List<dynamic>>(
+                future: futureResources,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return _buildErrorState(snapshot.error.toString());
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return _buildEmptyState(
-                      title: 'Aucune ressource trouvée',
-                      subtitle: 'Essayez de modifier vos critères de recherche',
-                      icon: Icons.search_off,
+                      title: "Aucune ressource trouvée",
+                      subtitle: "Essayez de modifier votre recherche ou vos filtres.",
+                      icon: Icons.info_outline,
+                    );
+                  } else {
+                    final filtered = filterResources(snapshot.data!);
+                    if (filtered.isEmpty) {
+                      return _buildEmptyState(
+                        title: "Aucun résultat",
+                        subtitle: "Aucune ressource ne correspond à votre recherche.",
+                        icon: Icons.search_off,
+                      );
+                    }
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(12), // Padding réduit
+                      itemCount: filtered.length,
+                      itemBuilder: (context, index) {
+                        final ressource = filtered[index];
+                        return FutureBuilder<List<Map<String, dynamic>>>(
+                          future: fetchCommentaires(ressource['idRessource']),
+                          builder: (context, commentSnapshot) {
+                            final comments = commentSnapshot.data ?? [];
+                            return _buildResourceCard(ressource, comments);
+                          },
+                        );
+                      },
                     );
                   }
-
-                  return Center(
-                    child: Container(
-                      constraints: const BoxConstraints(maxWidth: 1200),
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(24),
-                        itemCount: ressources.length,
-                        itemBuilder: (context, index) {
-                          final ressource = ressources[index];
-                          final ressourceId = ressource['idRessource'];
-
-                          if (!likedStatus.containsKey(ressourceId)) {
-                            fetchLikesForResource(ressourceId);
-                          }
-                          commentControllers.putIfAbsent(
-                            ressourceId,
-                                () => TextEditingController(),
-                          );
-                          showAllComments.putIfAbsent(ressourceId, () => false);
-
-                          return FutureBuilder<List<Map<String, dynamic>>>(
-                            future: fetchCommentaires(ressourceId),
-                            builder: (context, commentSnapshot) {
-                              final comments = commentSnapshot.data ?? [];
-                              return _buildResourceCard(ressource, comments);
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  );
-                }
-              },
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

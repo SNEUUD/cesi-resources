@@ -37,7 +37,11 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await http.post(
+<<<<<<< HEAD
         Uri.parse('http://chris-crp.freeboxos.fr:3000/login'),
+=======
+        Uri.parse('http://10.173.128.242:3000/login'),
+>>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'emailUtilisateur': email,

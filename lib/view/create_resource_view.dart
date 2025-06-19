@@ -65,7 +65,11 @@ class _CreateResourcePageState extends State<CreateResourcePage> {
 
   Future<List<Category>> fetchCategories() async {
     final response = await http.get(
+<<<<<<< HEAD
       Uri.parse('http://chris-crp.freeboxos.fr:3000/categories'),
+=======
+      Uri.parse('http://10.173.128.242:3000/categories'),
+>>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
     );
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
@@ -102,7 +106,11 @@ class _CreateResourcePageState extends State<CreateResourcePage> {
     _selectedImageBytes != null ? base64Encode(_selectedImageBytes!) : null;
 
     final response = await http.post(
+<<<<<<< HEAD
       Uri.parse('http://chris-crp.freeboxos.fr:3000/resources'),
+=======
+      Uri.parse('http://10.173.128.242:3000/resources'),
+>>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'title': _title,
@@ -122,7 +130,10 @@ class _CreateResourcePageState extends State<CreateResourcePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Ressource ajoutée avec succès !')),
       );
-      Navigator.pop(context, true);
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const HomePage()),
+            (route) => false,
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
