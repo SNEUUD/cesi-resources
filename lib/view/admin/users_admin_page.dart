@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../main.dart';
 import '../layout/header.dart';
 
 class UsersAdminPage extends StatefulWidget {
@@ -702,27 +703,29 @@ class _UsersAdminPageState extends State<UsersAdminPage> {
       backgroundColor: const Color(0xFFF8FAFC),
       body: Column(
         children: [
-          Header(),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              border: Border(
-                bottom: BorderSide(
-                  color: Color(0x4D000091), // Couleur bleue avec opacité
-                  width: 1,
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Color(0xFF000091)),
+                onPressed: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const HomePage()),
+                        (route) => false,
+                  );
+                },
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                'Administration',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Color(0xFF000091),
                 ),
               ),
-            ),
-            child: const Text(
-              'Administration',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: Color(0xFF000091),
-              ),
-            ),
+            ],
           ),
 
           // 🔹 Contenu principal
