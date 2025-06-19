@@ -395,6 +395,7 @@ app.get("/ressourcesAll", (req, res) => {
     FROM Ressources r
     JOIN Utilisateurs u ON r.Utilisateurs_idUtilisateur = u.idUtilisateur
     JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
+    WHERE r.statusRessource = 'affiche'
     ORDER BY r.dateRessource DESC
   `;
 
