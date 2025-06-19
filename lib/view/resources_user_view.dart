@@ -54,7 +54,7 @@ class _ResourcesUserViewState extends State<ResourcesUserView>
 
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:3000/ressources/user/$userId'),
+        Uri.parse('http://10.173.128.242:3000/ressources/user/$userId'),
       );
 
       if (response.statusCode == 200) {
@@ -92,7 +92,7 @@ class _ResourcesUserViewState extends State<ResourcesUserView>
     if (confirm == true) {
       try {
         final response = await http.delete(
-          Uri.parse('http://localhost:3000/ressources/$idRessource'),
+          Uri.parse('http://10.173.128.242:3000/ressources/$idRessource'),
         );
 
         if (response.statusCode == 200) {
@@ -173,7 +173,7 @@ class _ResourcesUserViewState extends State<ResourcesUserView>
       builder: (ctx) {
         fetchCategories() async {
           final response = await http.get(
-            Uri.parse('http://localhost:3000/categories'),
+            Uri.parse('http://10.173.128.242:3000/categories'),
           );
           if (response.statusCode == 200) {
             final List<dynamic> data = jsonDecode(response.body);
@@ -489,7 +489,7 @@ class _ResourcesUserViewState extends State<ResourcesUserView>
   ) async {
     try {
       final response = await http.put(
-        Uri.parse('http://localhost:3000/ressources/${r['idRessource']}'),
+        Uri.parse('http://10.173.128.242:3000/ressources/${r['idRessource']}'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'titre': titre,

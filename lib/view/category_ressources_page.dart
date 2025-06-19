@@ -44,7 +44,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
 
   Future<List<Map<String, dynamic>>> fetchCommentaires(int ressourceId) async {
     final response = await http.get(
-      Uri.parse('http://localhost:3000/ressources/$ressourceId/commentaires'),
+      Uri.parse('http://10.173.128.242:3000/ressources/$ressourceId/commentaires'),
     );
 
     if (response.statusCode == 200) {
@@ -61,7 +61,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
     if (userId == null || message.trim().isEmpty) return;
 
     final response = await http.post(
-      Uri.parse('http://localhost:3000/ressources/$ressourceId/commentaire'),
+      Uri.parse('http://10.173.128.242:3000/ressources/$ressourceId/commentaire'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'userId': userId, 'message': message.trim()}),
     );
@@ -79,7 +79,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
     if (userId == null) return;
 
     final response = await http.get(
-      Uri.parse('http://localhost:3000/ressources/$ressourceId/likes/$userId'),
+      Uri.parse('http://10.173.128.242:3000/ressources/$ressourceId/likes/$userId'),
     );
 
     if (response.statusCode == 200) {
@@ -97,7 +97,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
     if (userId == null) return;
 
     final response = await http.post(
-      Uri.parse('http://localhost:3000/interactions'),
+      Uri.parse('http://10.173.128.242:3000/interactions'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'userId': userId, 'ressourceId': ressourceId}),
     );
@@ -110,7 +110,7 @@ class _CategoryResourcesPageState extends State<CategoryResourcesPage> {
   Future<List<dynamic>> fetchResources() async {
     final response = await http.get(
       Uri.parse(
-        'http://localhost:3000/ressources?categorie=${widget.nomCategorie}',
+        'http://10.173.128.242:3000/ressources?categorie=${widget.nomCategorie}',
       ),
     );
     if (response.statusCode == 200) {
