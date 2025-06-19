@@ -75,11 +75,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
   Future<List<Category>> fetchCategories() async {
     try {
       final response = await http.get(
-<<<<<<< HEAD
         Uri.parse('http://chris-crp.freeboxos.fr:3000/categories'),
-=======
-        Uri.parse('http://10.173.128.242:3000/categories'),
->>>>>>> 88e79c0f8bd2050cf541dcbda6dcef92c71c4282
       );
 
       if (response.statusCode == 200) {
