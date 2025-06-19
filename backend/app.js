@@ -324,13 +324,16 @@ app.get(["/ressources", "/test/ressources"], (req, res) => {
     return res.status(400).json({ error: "Catégorie manquante" });
   }
 
-  const sql = `SELECT r.idRessource, r.titreRessource, r.messageRessource,
+  const sql = `
+    SELECT r.idRessource, r.titreRessource, r.messageRessource,
+
            r.dateRessource, r.statusRessource, r.imageRessource,
            u.pseudoUtilisateur
     FROM Ressources r
     JOIN Catégories c ON r.Catégories_idCatégorie = c.idCatégorie
     LEFT JOIN Utilisateurs u ON r.Utilisateurs_idUtilisateur = u.idUtilisateur
     WHERE c.nomCatégorie = ? AND r.statusRessource = 'affiche'
+
     ORDER BY r.dateRessource DESC`;
   const conn = getDB(req);
   conn.query(sql, [categorie], (err, results) => {
@@ -345,6 +348,7 @@ app.get(["/ressources", "/test/ressources"], (req, res) => {
         ? Buffer.from(ressource.imageRessource).toString("base64")
         : null,
     }));
+
 
     res.json(ressources);
   });
