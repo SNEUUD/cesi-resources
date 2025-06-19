@@ -131,6 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final response = await http.put(
         Uri.parse('http://chris-crp.freeboxos.fr:3000/profil/$userId/edit'),
+
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -311,7 +312,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 16),
                   // Paragraphe d'introduction
                   Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                    'Bienvenue dans votre espace personnel. Ici, vous pouvez consulter et modifier vos informations de profil, gérer vos ressources partagées, ainsi que mettre à jour votre mot de passe pour sécuriser votre compte.',
                     style: TextStyle(
                       fontSize: isMobile ? 12 : 14,
                       color: Color(0xFF0000A0), // Bleu foncé
@@ -405,7 +406,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                           child: Text(
-                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+                            'Vos informations sont confidentielles et utilisées uniquement dans le cadre de la plateforme (RE)SOURCES RELATIONNELLES. Vous avez la possibilité de les modifier à tout moment.',
                             style: TextStyle(
                               fontSize: isMobile ? 12 : 14,
                               color: Color(0xFF0000A0), // Bleu foncé

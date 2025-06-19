@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:resources/view/layout/footer.dart';
 import 'view/layout/header.dart';
+import 'package:resources/view/auth/register_view.dart';
 
 void main() {
   runApp(const MainApp());
@@ -45,7 +46,9 @@ class HomePage extends StatelessWidget {
                 padding: isMobile
                     ? const EdgeInsets.all(20)
                     : const EdgeInsets.all(40),
-                child: isMobile ? _buildMobileContent() : _buildDesktopContent(),
+                child: isMobile
+                    ? _buildMobileContent(context)
+                    : _buildDesktopContent(context),
               ),
             ),
           ),
@@ -55,13 +58,13 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildDesktopContent() {
+  Widget _buildDesktopContent(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           flex: 2,
-          child: _buildTextColumn(fontSizeTitle: 48, fontSizeText: 16, spacing: 24),
+          child: _buildTextColumn(context, fontSizeTitle: 48, fontSizeText: 16, spacing: 24),
         ),
         const SizedBox(width: 60),
         Expanded(
@@ -72,18 +75,21 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildMobileContent() {
+  Widget _buildMobileContent(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildTextColumn(fontSizeTitle: 32, fontSizeText: 14, spacing: 16),
+        _buildTextColumn(context, fontSizeTitle: 32, fontSizeText: 14, spacing: 16),
         const SizedBox(height: 24),
         _buildImage(),
       ],
     );
   }
 
-  Widget _buildTextColumn({required double fontSizeTitle, required double fontSizeText, required double spacing}) {
+  Widget _buildTextColumn(BuildContext context,
+      {required double fontSizeTitle,
+      required double fontSizeText,
+      required double spacing}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -98,7 +104,7 @@ class HomePage extends StatelessWidget {
         ),
         SizedBox(height: spacing),
         Text(
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...',
+          'Découvrez une plateforme dédiée au bien-être et aux relations humaines.Partagez, explorez et enrichissez votre quotidien grâce à des ressources inspirantes proposées par la communauté.',
           style: TextStyle(
             fontSize: fontSizeText,
             color: Colors.grey,
@@ -107,11 +113,17 @@ class HomePage extends StatelessWidget {
         ),
         SizedBox(height: spacing * 1.3),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const RegisterPage()),
+            );
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF1E3A8A),
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(25),
             ),
