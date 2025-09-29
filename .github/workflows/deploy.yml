@@ -1,0 +1,38 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "dev" ] 
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v3
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Installer dépendances
+        run: npm install
+        working-directory: backend
+
+      - name: Lancer les tests
+        run: npm test
+        working-directory: backend
+
+      - name: Déployer sur le serveur
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/${{ secrets.SERVER_USER }}/cesi-resources/backend
+            git pull
+            npm install --production
+            pm2 restart app || pm2 start app.js --name cesi-backend
