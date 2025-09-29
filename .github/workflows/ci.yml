@@ -1,11 +1,13 @@
-name: CI/CD Pipeline
+name: CI - Tests automatiques
 
 on:
   push:
-    branches: [ "dev" ] 
+    branches: [ "dev" ]   # ou main/master selon ton projet
+  pull_request:
+    branches: [ "dev" ]
 
 jobs:
-  build-and-deploy:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,22 +19,10 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Installer dépendances
+      - name: Installer dépendances backend
         run: npm install
         working-directory: backend
 
-      - name: Lancer les tests
+      - name: Lancer les tests backend
         run: npm test
         working-directory: backend
-
-      - name: Déployer sur le serveur
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /home/${{ secrets.SERVER_USER }}/cesi-resources/backend
-            git pull
-            npm install --production
-            pm2 restart app || pm2 start app.js --name cesi-backend
