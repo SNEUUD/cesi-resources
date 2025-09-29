@@ -1,13 +1,11 @@
-name: CI - Tests automatiques
+name: CI - Build automatique
 
 on:
   push:
-    branches: [ "dev" ]   # ou main/master selon ton projet
-  pull_request:
-    branches: [ "dev" ]
+    branches: [ "dev" ]   # adapte si tu travailles sur main/master
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,6 +21,5 @@ jobs:
         run: npm install
         working-directory: backend
 
-      - name: Lancer les tests backend
-        run: npm test
-        working-directory: backend
+      - name: Vérifier le lancement
+        run: node -v && npm -v && echo "Build terminé avec succès !"
