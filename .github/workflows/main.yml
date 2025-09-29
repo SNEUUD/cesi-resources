@@ -36,8 +36,3 @@ jobs:
       # 5️⃣ Déployer sur S3
       - name: Sync files to S3
         run: aws s3 sync build/web s3://${{ secrets.AWS_S3_BUCKET }} --delete
-
-      # 6️⃣ (Optionnel) Invalider CloudFront si tu utilises un CDN
-      - name: Invalidate CloudFront cache
-        if: ${{ secrets.AWS_CLOUDFRONT_ID }}
-        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_ID }} --paths "/*"
